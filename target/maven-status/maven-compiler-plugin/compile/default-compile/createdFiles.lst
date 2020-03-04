@@ -1,1 +1,4 @@
-com\eldarian\ChartPane.class
+com/eldarian/App.class
+com/eldarian/PrimaryController.class
+com/eldarian/ChartPane.class
+com/eldarian/SecondaryController.class

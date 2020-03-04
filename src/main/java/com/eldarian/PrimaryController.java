@@ -2,12 +2,19 @@ package com.eldarian;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.Scanner;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -23,20 +30,46 @@ public class PrimaryController {
 
     private ChartPane chartPane;
 
-    //      <ChartViewer fx:id="lineChartViewer" prefHeight="300.0" prefWidth="500.0"> </ChartViewer>
+    // Перед запуском не забыть вернуть в primary.fxml  <ChartViewer fx:id="lineChartViewer" prefHeight="300.0" prefWidth="500.0"> </ChartViewer>
 
     @FXML
     private ChartViewer lineChartViewer;
+
+    @FXML
+    private TextField filePath;
+
+    private XYSeriesCollection dataset;
+
+    @FXML
+    private void getFromFile() throws IOException {
+        File file = new File(filePath.getText());
+        //File file = new File("//home//dmitry", "testData.csv");
+
+        XYSeries fileSeries = new XYSeries("series-" + (dataset.getSeriesCount()+1));
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            Scanner scanner = new Scanner(reader.readLine());
+            scanner.useDelimiter(",");
+            scanner.useLocale(Locale.ENGLISH);
+
+            double x = 0;
+            while(scanner.hasNext()) {
+                fileSeries.add(x, scanner.nextDouble());
+                x++;
+            }
+        }
+        dataset.addSeries(fileSeries);
+    }
 
     @FXML
     private void switchToSecondary() throws IOException {
         App.setRoot("secondary");
     }
 
+
     private void insertChart() {
 
 
-        XYDataset dataset = createDataset();
+        dataset = createDataset();
         JFreeChart chart = createChart(dataset);
         this.lineChartViewer.setChart(chart);
 
@@ -52,13 +85,13 @@ public class PrimaryController {
     }
 
 
-    private static XYDataset createDataset() {
-        XYSeries channel1 = new XYSeries("channel-1");
+    private static XYSeriesCollection createDataset() {
+        XYSeries channel1 = new XYSeries("series-1");
         for (double x = 0; x < 60; x+=0.5) {
             channel1.add(x, Math.sin(x)*4);
         }
 
-        XYSeries channel2 = new XYSeries("channel-2");
+        XYSeries channel2 = new XYSeries("series-2");
         for (int x = 0; x < 10; x++) {
             channel2.add(x, x + Math.random() * 4.0);
         }
