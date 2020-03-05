@@ -11,11 +11,16 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Scanner;
 
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.fx.ChartViewer;
@@ -37,6 +42,9 @@ public class PrimaryController {
 
     @FXML
     private TextField filePath;
+
+    @FXML
+    private MenuButton channelsChooser;
 
     private XYSeriesCollection dataset;
 
@@ -60,28 +68,31 @@ public class PrimaryController {
         dataset.addSeries(fileSeries);
     }
 
+    private void openSettingsWindow() {
+        Stage sourceWindow = new Stage();
+        sourceWindow.setTitle("Settings");
+    }
+
     @FXML
     private void switchToSecondary() throws IOException {
         App.setRoot("secondary");
     }
 
-
-    private void insertChart() {
-
-
-        dataset = createDataset();
-        JFreeChart chart = createChart(dataset);
-        this.lineChartViewer.setChart(chart);
-
-        /*this.chartPane = new ChartPane();
-        lineChartViewer = chartPane.getChartViewer();*/
-        //lineChartPane.getChildren().add(chartPane.getChartViewer());
-
-    }
-
     @FXML
     private void initialize() {
         insertChart();
+        autoShow();
+    }
+
+    @FXML
+    public void autoShow() {
+        channelsChooser.setOnAction(Event::consume);
+    }
+
+    private void insertChart() {
+        dataset = createDataset();
+        JFreeChart chart = createChart(dataset);
+        this.lineChartViewer.setChart(chart);
     }
 
 
@@ -102,9 +113,10 @@ public class PrimaryController {
         return dataset;
     }
 
+
     private static JFreeChart createChart(XYDataset dataset) {
         JFreeChart chart = ChartFactory.createXYLineChart(
-                "MainApp", "X", "Y", dataset);
+                "", "X", "Y", dataset);
         String fontName = "Palatino";
         chart.getTitle().setFont(new Font(fontName, Font.BOLD, 18));
         XYPlot plot = (XYPlot) chart.getPlot();
@@ -125,4 +137,6 @@ public class PrimaryController {
         }
         return chart;
     }
+
+
 }
