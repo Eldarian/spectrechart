@@ -1,6 +1,6 @@
 com/eldarian/App.class
-com/eldarian/CalibrationController.class
+com/eldarian/fx/HistogramController.class
+com/eldarian/fx/CalibrationController.class
+com/eldarian/fx/ServerConfigController.class
 com/eldarian/connectionHandler/Server.class
 com/eldarian/connectionHandler/DeviceConnector.class
-com/eldarian/ServerConfigController.class
-com/eldarian/HistogramController.class

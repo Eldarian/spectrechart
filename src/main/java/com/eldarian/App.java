@@ -1,5 +1,6 @@
 package com.eldarian;
 
+import com.eldarian.channels.Channel;
 import com.eldarian.connectionHandler.DeviceConnector;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -8,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * JavaFX App
@@ -16,6 +18,8 @@ public class App extends Application {
 
     private static Scene scene;
 
+    public ArrayList<Channel> channels = new ArrayList<>();
+
     @Override
     public void start(Stage stage) throws IOException {
         scene = new Scene(loadFXML("histogramView"));
@@ -23,7 +27,7 @@ public class App extends Application {
         stage.show();
     }
 
-    static void setRoot(String fxml) throws IOException {
+    public static void setRoot(String fxml) throws IOException {
         scene.setRoot(loadFXML(fxml));
     }
 

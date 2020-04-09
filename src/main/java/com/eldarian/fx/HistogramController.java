@@ -1,4 +1,4 @@
-package com.eldarian;
+package com.eldarian.fx;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
@@ -10,6 +10,7 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.Scanner;
 
+import com.eldarian.App;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

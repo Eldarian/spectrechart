@@ -1,4 +1,4 @@
-package com.eldarian;
+package com.eldarian.fx;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.Scanner;
 
+import com.eldarian.App;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -104,6 +105,10 @@ public class CalibrationController {
         for (double x = 0; x < 60; x+=0.5) {
             channel1.add(x, Math.sin(x)*4);
         }
+
+        /*
+        * XYSeries channel1 = channels.get(0).getChannelSeries();
+        * */
 
         XYSeries channel2 = new XYSeries("series-2");
         for (int x = 0; x < 10; x++) {

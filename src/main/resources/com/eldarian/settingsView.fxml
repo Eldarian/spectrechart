@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.eldarian.ServerConfigController">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.eldarian.fx.ServerConfigController">
    <children>
       <Button layoutX="365.0" layoutY="171.0" mnemonicParsing="false" onAction="#connectHandler" text="Connect" />
       <TextField fx:id="data" layoutX="191.0" layoutY="171.0" />

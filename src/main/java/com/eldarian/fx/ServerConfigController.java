@@ -1,4 +1,4 @@
-package com.eldarian;
+package com.eldarian.fx;
 
 import com.eldarian.connectionHandler.DeviceConnector;
 import javafx.fxml.FXML;

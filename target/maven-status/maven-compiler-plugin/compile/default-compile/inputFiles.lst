@@ -1,6 +1,6 @@
 /home/dmitry/IdeaProjects/spectrechart/src/main/java/com/eldarian/App.java
-/home/dmitry/IdeaProjects/spectrechart/src/main/java/com/eldarian/ServerConfigController.java
-/home/dmitry/IdeaProjects/spectrechart/src/main/java/com/eldarian/CalibrationController.java
 /home/dmitry/IdeaProjects/spectrechart/src/main/java/com/eldarian/connectionHandler/Server.java
+/home/dmitry/IdeaProjects/spectrechart/src/main/java/com/eldarian/fx/HistogramController.java
+/home/dmitry/IdeaProjects/spectrechart/src/main/java/com/eldarian/fx/CalibrationController.java
 /home/dmitry/IdeaProjects/spectrechart/src/main/java/com/eldarian/connectionHandler/DeviceConnector.java
-/home/dmitry/IdeaProjects/spectrechart/src/main/java/com/eldarian/HistogramController.java
+/home/dmitry/IdeaProjects/spectrechart/src/main/java/com/eldarian/fx/ServerConfigController.java
