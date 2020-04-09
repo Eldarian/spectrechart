@@ -1,6 +1,7 @@
 package com.eldarian;
 
 import com.eldarian.channels.Channel;
+import com.eldarian.channels.ChannelService;
 import com.eldarian.connectionHandler.DeviceConnector;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -18,7 +19,7 @@ public class App extends Application {
 
     private static Scene scene;
 
-    public ArrayList<Channel> channels = new ArrayList<>();
+    public ChannelService service = new ChannelService();
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -32,7 +33,7 @@ public class App extends Application {
     }
 
     private static Parent loadFXML(String fxml) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource( "views/" + fxml + ".fxml"));
         return fxmlLoader.load();
     }
 
