@@ -1,4 +1,6 @@
 com/eldarian/App.class
-com/eldarian/PrimaryController.class
-com/eldarian/ChartPane.class
-com/eldarian/SecondaryController.class
+com/eldarian/CalibrationController.class
+com/eldarian/connectionHandler/Server.class
+com/eldarian/connectionHandler/DeviceConnector.class
+com/eldarian/ServerConfigController.class
+com/eldarian/HistogramController.class

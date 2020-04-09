@@ -6,20 +6,17 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.URL;
 import java.util.Locale;
-import java.util.ResourceBundle;
 import java.util.Scanner;
 
-import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -31,22 +28,20 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-public class PrimaryController {
+public class CalibrationController {
 
-    private ChartPane chartPane;
-
-    // Перед запуском не забыть вернуть в primary.fxml  <ChartViewer fx:id="lineChartViewer" prefHeight="300.0" prefWidth="500.0"> </ChartViewer>
+    private XYSeriesCollection dataset;
 
     @FXML
     private ChartViewer lineChartViewer;
 
     @FXML
-    private TextField filePath;
-
-    @FXML
     private MenuButton channelsChooser;
 
-    private XYSeriesCollection dataset;
+
+    @FXML
+    private TextField filePath;
+
 
     @FXML
     private void getFromFile() throws IOException {
@@ -68,14 +63,22 @@ public class PrimaryController {
         dataset.addSeries(fileSeries);
     }
 
-    private void openSettingsWindow() {
-        Stage sourceWindow = new Stage();
-        sourceWindow.setTitle("Settings");
+
+    @FXML
+    private void switchToHistogram() throws IOException {
+        App.setRoot("histogramView");
     }
 
     @FXML
-    private void switchToSecondary() throws IOException {
-        App.setRoot("secondary");
+    private void openSettingsWindow() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/eldarian/settingsView.fxml"));
+        Parent root = fxmlLoader.load();
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setOpacity(1);
+        stage.setTitle("My New Stage Title");
+        stage.setScene(new Scene(root, 450, 450));
+        stage.showAndWait();
     }
 
     @FXML
@@ -85,7 +88,7 @@ public class PrimaryController {
     }
 
     @FXML
-    public void autoShow() {
+    private void autoShow() {
         channelsChooser.setOnAction(Event::consume);
     }
 
@@ -137,6 +140,4 @@ public class PrimaryController {
         }
         return chart;
     }
-
-
 }

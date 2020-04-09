@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.eldarian.ServerConfigController">
+   <children>
+      <Button layoutX="365.0" layoutY="171.0" mnemonicParsing="false" onAction="#connectHandler" text="Connect" />
+      <TextField fx:id="data" layoutX="191.0" layoutY="171.0" />
+      <Label layoutX="148.0" layoutY="248.0" prefHeight="50.0" prefWidth="341.0" text="Label" fx:id="answer" />
+   </children>
+</AnchorPane>
