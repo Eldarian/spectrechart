@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.Socket;
 
 public class DeviceConnector{
+    public ClientRequest request;
 
     public DeviceConnector(String address, int port, File file) {
         try (
@@ -20,5 +21,10 @@ public class DeviceConnector{
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+
+    private void getSingleChannel(int number) {
+        out.writeUTF("get"+number);
     }
 }

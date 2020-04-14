@@ -2,6 +2,7 @@ package com.eldarian;
 
 import com.eldarian.channels.Channel;
 import com.eldarian.channels.ChannelService;
+import com.eldarian.connectionHandler.ClientRequest;
 import com.eldarian.connectionHandler.DeviceConnector;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -19,7 +20,8 @@ public class App extends Application {
 
     private static Scene scene;
 
-    public ChannelService service = new ChannelService();
+    public static ChannelService service = new ChannelService();
+    public static ClientRequest request;
 
     @Override
     public void start(Stage stage) throws IOException {

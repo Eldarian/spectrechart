@@ -1,5 +1,7 @@
 package com.eldarian.channels;
 
+import org.jfree.data.xy.XYSeriesCollection;
+
 import java.io.File;
 import java.util.ArrayList;
 
@@ -7,10 +9,13 @@ public class ChannelService {
 
     public ArrayList<Channel> channels;
 
+    public XYSeriesCollection calibrationDataset;
+
     public ChannelService() {
         this.channels = new ArrayList<>();
         for (int i = 1; i <= 16; i++) {
-            channels.add(new Channel(i, File))
+            channels.add(new Channel(i, new File("data/channel-"+i+".csv"), 1));
+            calibrationDataset.addSeries(channels.get(i).getChannelSeries());
         }
     }
 

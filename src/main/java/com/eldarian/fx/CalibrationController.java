@@ -10,6 +10,7 @@ import java.util.Locale;
 import java.util.Scanner;
 
 import com.eldarian.App;
+import com.eldarian.connectionHandler.ClientRequest;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -31,7 +32,9 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 public class CalibrationController {
 
-    private XYSeriesCollection dataset;
+    private XYSeriesCollection dataset = App.service.calibrationDataset;
+
+    private JFreeChart chart;
 
     @FXML
     private ChartViewer lineChartViewer;
@@ -94,13 +97,27 @@ public class CalibrationController {
     }
 
     private void insertChart() {
-        dataset = createDataset();
-        JFreeChart chart = createChart(dataset);
+        //dataset = createExampleDataset();
+        chart = createChart(dataset);
         this.lineChartViewer.setChart(chart);
     }
 
+    @FXML
+    private void setChannel() {
+        XYPlot plot = (XYPlot) chart.getPlot();
+        XYItemRenderer itemRenderer = plot.getRenderer();
+        if(itemRenderer instanceof XYLineAndShapeRenderer) {
+            for (int i = 0; i < 16; i++) {
+                XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) itemRenderer;
+                renderer.setSeriesShapesVisible(i, false);
+                renderer.setSeriesLinesVisible(i, false);
+            }
+        }
+    }
 
-    private static XYSeriesCollection createDataset() {
+
+
+    private static XYSeriesCollection createExampleDataset() {
         XYSeries channel1 = new XYSeries("series-1");
         for (double x = 0; x < 60; x+=0.5) {
             channel1.add(x, Math.sin(x)*4);
