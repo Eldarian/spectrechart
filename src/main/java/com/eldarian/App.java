@@ -20,8 +20,9 @@ public class App extends Application {
 
     private static Scene scene;
 
-    public static ChannelService service = new ChannelService();
-    public static ClientRequest request;
+    public static ChannelService channelService;
+
+    public static volatile ClientRequest mode = ClientRequest.PEAKS;
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -41,7 +42,9 @@ public class App extends Application {
 
     public static void main(String[] args)
     {
-       launch();
+        Thread device = new Thread(new DeviceConnector("127.0.0.1", 5000));
+        device.start();
+        launch();
     }
 
 }

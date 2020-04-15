@@ -1,5 +1,7 @@
 {
   "Ip": "127.0.0.1",
   "port": "5500",
+  "Subnet Mask": "255.255.255.000",
+  "Gateway address": "192.168.001.001",
   "OutputFile": "testData.csv"
 }

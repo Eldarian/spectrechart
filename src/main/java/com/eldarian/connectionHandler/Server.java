@@ -1,14 +1,14 @@
 package com.eldarian.connectionHandler;
 
+// A Java program for a Server
+import java.net.*;
 import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
 
 public class Server
 {
     //initialize socket and input stream
-    private Socket socket   = null;
-    private ServerSocket server   = null;
+    private Socket          socket   = null;
+    private ServerSocket    server   = null;
     private DataInputStream in       =  null;
     private DataOutputStream out = null;
 
@@ -36,17 +36,20 @@ public class Server
 
             // reads message from client until "Over" is sent
             double x = 0.0;
-            while (x < 60.0)
+            while (!line.equals("Disconnect"))
             {
                 try
                 {
                     out.flush();
-                    //line = in.readUTF();
-                    System.out.println(line);
-                    String outline = Math.round(Math.sin(x)*4) + ",";
-                    out.writeUTF(outline);
-                    x++;
-
+                    line = in.readUTF();
+                    if (line.equals("channel1")) {
+                        do {
+                            String outline = "" + Math.round(Math.sin(x) * 4);
+                            out.writeUTF(outline);
+                            x++;
+                            line = in.readUTF();
+                        } while(line.equals("ok"));
+                    }
                 }
                 catch(IOException i)
                 {

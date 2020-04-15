@@ -1,9 +1,11 @@
 package com.eldarian.fx;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.Random;
 
 import com.eldarian.App;
+import com.eldarian.connectionHandler.ClientRequest;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -14,6 +16,10 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.fx.ChartViewer;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYBarRenderer;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.statistics.HistogramType;
@@ -29,6 +35,7 @@ public class HistogramController {
 
     @FXML
     private void switchToCalibrationView() throws IOException {
+        App.mode = ClientRequest.CHANNEL;
         App.setRoot("calibrationView");
     }
     @FXML
@@ -53,14 +60,16 @@ public class HistogramController {
         XYSeries series = new XYSeries("");
         DefaultCategoryDataset categoryDataset = new DefaultCategoryDataset();
 
-        for (int x = 1; x<=16; x++) {
-            categoryDataset.addValue(0, "", ""+x);
+        for (int x = 1; x<=32; x++) {
+            categoryDataset.addValue(Math.random()*10, "", ""+(x%16+1));
         }
         JFreeChart barChart = ChartFactory.createBarChart("barchart",
                                                 "channels",
                                                     "peaks",
                                                                 categoryDataset);
-        histogramChartViewer.setChart(barChart);
+
+
+            histogramChartViewer.setChart(barChart);
     }
 
     private void createHistogram() {

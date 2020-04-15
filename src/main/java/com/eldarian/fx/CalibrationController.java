@@ -10,12 +10,14 @@ import java.util.Locale;
 import java.util.Scanner;
 
 import com.eldarian.App;
+import com.eldarian.channels.ChannelService;
 import com.eldarian.connectionHandler.ClientRequest;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
@@ -32,20 +34,28 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 public class CalibrationController {
 
-    private XYSeriesCollection dataset = App.service.calibrationDataset;
-
+    //private XYSeriesCollection dataset = App.service.calibrationDataset;
+    private XYSeriesCollection dataset;
     private JFreeChart chart;
+    private ChannelService channelService = new ChannelService();
 
     @FXML
     private ChartViewer lineChartViewer;
 
     @FXML
-    private MenuButton channelsChooser;
-
+    private ChoiceBox channelsChooser;
 
     @FXML
     private TextField filePath;
 
+    @FXML
+    private void startDraw() {
+        if (channelsChooser.getValue() != null) {
+            int channel = (Integer) channelsChooser.getValue();
+            channelService.clearChannel(channel);
+            App.mode.currentChannel = channel;
+        }
+    }
 
     @FXML
     private void getFromFile() throws IOException {
@@ -70,6 +80,7 @@ public class CalibrationController {
 
     @FXML
     private void switchToHistogram() throws IOException {
+        App.mode = ClientRequest.PEAKS;
         App.setRoot("histogramView");
     }
 
@@ -80,10 +91,12 @@ public class CalibrationController {
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setOpacity(1);
-        stage.setTitle("My New Stage Title");
+        stage.setTitle("Settings");
         stage.setScene(new Scene(root, 450, 450));
         stage.showAndWait();
     }
+
+
 
     @FXML
     private void initialize() {
@@ -141,7 +154,7 @@ public class CalibrationController {
 
     private static JFreeChart createChart(XYDataset dataset) {
         JFreeChart chart = ChartFactory.createXYLineChart(
-                "", "X", "Y", dataset);
+                "", "Time, s", "Voltage, V", dataset);
         String fontName = "Palatino";
         chart.getTitle().setFont(new Font(fontName, Font.BOLD, 18));
         XYPlot plot = (XYPlot) chart.getPlot();
