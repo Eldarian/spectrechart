@@ -10,14 +10,15 @@ public class ChannelService {
 
     public ArrayList<Channel> channels;
 
-    public XYSeriesCollection calibrationDataset;
+    public XYSeriesCollection calibrationDataset = new XYSeriesCollection();
     private int timestamp = 0;
 
     public ChannelService() {
         this.channels = new ArrayList<>();
         for (int i = 1; i <= 16; i++) {
-            channels.add(new Channel(i, new File("data/channel-"+i+".csv"), 1));
-            calibrationDataset.addSeries(channels.get(i).getChannelSeries());
+            channels.add(new Channel(i, 1));
+            System.out.println("channel" + i + "added to array");
+            calibrationDataset.addSeries(channels.get(i-1).getChannelSeries());
         }
     }
 

@@ -36,6 +36,7 @@ public class HistogramController {
     @FXML
     private void switchToCalibrationView() throws IOException {
         App.mode = ClientRequest.CHANNEL;
+        System.out.println(App.mode.currentChannel);
         App.setRoot("calibrationView");
     }
     @FXML

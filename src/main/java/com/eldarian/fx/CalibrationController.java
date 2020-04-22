@@ -34,10 +34,9 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 public class CalibrationController {
 
-    //private XYSeriesCollection dataset = App.service.calibrationDataset;
-    private XYSeriesCollection dataset;
     private JFreeChart chart;
     private ChannelService channelService = new ChannelService();
+    private XYSeriesCollection dataset = channelService.calibrationDataset;
 
     @FXML
     private ChartViewer lineChartViewer;
@@ -101,6 +100,7 @@ public class CalibrationController {
     @FXML
     private void initialize() {
         insertChart();
+        System.out.println("chart inserted");
         autoShow();
     }
 
@@ -112,7 +112,9 @@ public class CalibrationController {
     private void insertChart() {
         //dataset = createExampleDataset();
         chart = createChart(dataset);
+        System.out.println("Chart created");
         this.lineChartViewer.setChart(chart);
+        System.out.println("chart set");
     }
 
     @FXML

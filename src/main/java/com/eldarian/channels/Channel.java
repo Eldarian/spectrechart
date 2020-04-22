@@ -7,15 +7,26 @@ import java.io.File;
 public class Channel {
     private int number;
     private File channelFile;
-    private XYSeries channelSeries = new XYSeries("channel-1");
+    private XYSeries channelSeries;
     private int peaksNum = 0;
     private double threshold;
+
 
     public Channel(int number, File channelFile, double threshold) {
         this.channelFile = channelFile;
         this.threshold = threshold;
         this.number = number;
+        channelSeries = new XYSeries("channel-" + number);
     }
+
+
+    public Channel(int number, double threshold) {
+        this.threshold = threshold;
+        this.number = number;
+        channelSeries = new XYSeries("channel-" + number);
+
+    }
+
 
     public void updateBar(double value) {
         if(value > threshold) {
