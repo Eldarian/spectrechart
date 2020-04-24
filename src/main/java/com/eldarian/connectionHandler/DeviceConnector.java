@@ -24,6 +24,7 @@ public class DeviceConnector implements Runnable {
                 DataOutputStream out = new DataOutputStream(socket.getOutputStream())) {
             System.out.println("Connected");
             while(mode != ClientRequest.DISCONNECT) {
+                System.out.println(mode);
                 if (mode == ClientRequest.CHANNEL) {
                     getSingleChannel(mode.currentChannel, out);
                     while (mode == ClientRequest.CHANNEL && mode.currentChannel==currentChannel) {
@@ -43,11 +44,15 @@ public class DeviceConnector implements Runnable {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
+        finally {
+            System.out.println("Disconnected");
+        }
     }
 
 
     private void getSingleChannel(int number, DataOutputStream out) throws IOException {
         currentChannel = number;
+        System.out.println("channel" + number);
         out.writeUTF("channel"+number);
     }
 }

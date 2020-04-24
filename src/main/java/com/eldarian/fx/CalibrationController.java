@@ -25,6 +25,7 @@ import javafx.stage.Stage;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.fx.ChartViewer;
+import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
@@ -44,38 +45,16 @@ public class CalibrationController {
     @FXML
     private ChoiceBox channelsChooser;
 
-    @FXML
-    private TextField filePath;
 
     @FXML
-    private void startDraw() {
+    private void startDraw() throws InterruptedException {
         if (channelsChooser.getValue() != null) {
             int channel = (Integer) channelsChooser.getValue();
             channelService.clearChannel(channel);
             App.mode.currentChannel = channel;
+            App.device.notify();
         }
     }
-
-    @FXML
-    private void getFromFile() throws IOException {
-        File file = new File(filePath.getText());
-        //File file = new File("//home//dmitry", "testData.csv");
-
-        XYSeries fileSeries = new XYSeries("series-" + (dataset.getSeriesCount()+1));
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            Scanner scanner = new Scanner(reader.readLine());
-            scanner.useDelimiter(",");
-            scanner.useLocale(Locale.ENGLISH);
-
-            double x = 0;
-            while(scanner.hasNext()) {
-                fileSeries.add(x, scanner.nextDouble());
-                x++;
-            }
-        }
-        dataset.addSeries(fileSeries);
-    }
-
 
     @FXML
     private void switchToHistogram() throws IOException {
@@ -130,6 +109,28 @@ public class CalibrationController {
         }
     }
 
+    @FXML
+    private TextField filePath;
+
+    @FXML
+    private void getFromFile() throws IOException {
+        File file = new File(filePath.getText());
+        //File file = new File("//home//dmitry", "testData.csv");
+
+        XYSeries fileSeries = new XYSeries("series-" + (dataset.getSeriesCount()+1));
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            Scanner scanner = new Scanner(reader.readLine());
+            scanner.useDelimiter(",");
+            scanner.useLocale(Locale.ENGLISH);
+
+            double x = 0;
+            while(scanner.hasNext()) {
+                fileSeries.add(x, scanner.nextDouble());
+                x++;
+            }
+        }
+        dataset.addSeries(fileSeries);
+    }
 
 
     private static XYSeriesCollection createExampleDataset() {
@@ -156,7 +157,14 @@ public class CalibrationController {
 
     private static JFreeChart createChart(XYDataset dataset) {
         JFreeChart chart = ChartFactory.createXYLineChart(
-                "", "Time, s", "Voltage, V", dataset);
+                                                        "Calibration",
+                                                        "Time, s",
+                                                        "Voltage, V",
+                                                         dataset,
+                                                         PlotOrientation.HORIZONTAL,
+                                                        false,
+                                                        true,
+                                                        false);
         String fontName = "Palatino";
         chart.getTitle().setFont(new Font(fontName, Font.BOLD, 18));
         XYPlot plot = (XYPlot) chart.getPlot();

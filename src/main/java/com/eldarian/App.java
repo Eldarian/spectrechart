@@ -24,6 +24,8 @@ public class App extends Application {
 
     public static volatile ClientRequest mode = ClientRequest.PEAKS;
 
+    public static Thread device;
+
     @Override
     public void start(Stage stage) throws IOException {
         scene = new Scene(loadFXML("histogramView"));
@@ -42,7 +44,7 @@ public class App extends Application {
 
     public static void main(String[] args)
     {
-        Thread device = new Thread(new DeviceConnector("127.0.0.1", 5000));
+        device = new Thread(new DeviceConnector("127.0.0.1", 5000));
         device.start();
         launch();
     }
