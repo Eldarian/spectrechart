@@ -5,10 +5,12 @@ import com.eldarian.channels.ChannelService;
 import com.eldarian.connectionHandler.ClientRequest;
 import com.eldarian.connectionHandler.DeviceConnector;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,6 +33,8 @@ public class App extends Application {
         scene = new Scene(loadFXML("histogramView"));
         stage.setScene(scene);
         stage.show();
+
+        stage.setOnCloseRequest(windowEvent -> System.exit(0));
     }
 
     public static void setRoot(String fxml) throws IOException {

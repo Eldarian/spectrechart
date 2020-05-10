@@ -1,5 +1,8 @@
 package com.eldarian.channels;
 
+import com.eldarian.App;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
@@ -11,6 +14,7 @@ public class ChannelService {
     public ArrayList<Channel> channels;
 
     public XYSeriesCollection calibrationDataset = new XYSeriesCollection();
+    public DefaultCategoryDataset histogramDataset = new DefaultCategoryDataset();
     private int timestamp = 0;
 
     public ChannelService() {
@@ -24,8 +28,14 @@ public class ChannelService {
 
     //Нужно наладить изменение только включённых функций.
 
-    public void update(int currentChannel, String data) {
-        channels.get(currentChannel).getChannelSeries().add(timestamp, Double.parseDouble(data));
+    public void handleData(String line) {
+        switch (App.mode) {
+            case PEAKS:
+                histogramDataset.addValue(1, "",  line);
+                break;
+            case CHANNEL:
+                calibrationDataset.getSeries(App.mode.currentChannel).add(timestamp, Double.parseDouble(line));
+        }
     }
 
     public void clearChannel(int channel) {

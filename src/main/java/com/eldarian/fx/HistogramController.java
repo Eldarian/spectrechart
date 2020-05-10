@@ -58,7 +58,6 @@ public class HistogramController {
     }
 
     private  void createXYBar() {
-        XYSeries series = new XYSeries("");
         DefaultCategoryDataset categoryDataset = new DefaultCategoryDataset();
 
         for (int x = 1; x<=32; x++) {
