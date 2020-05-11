@@ -1,5 +1,6 @@
 package com.eldarian.fx;
 
+import com.eldarian.App;
 import com.eldarian.connectionHandler.*;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -32,7 +33,8 @@ public class ServerConfigController{
 
     @FXML
     private void connectHandler() {
-
+        App.socketConnector.connect(hostTextField.getText(), portTextField.getText());
+        displayState(ConnectionDisplayState.CONNECTED);
     }
 
     @FXML
@@ -70,8 +72,7 @@ public class ServerConfigController{
         }
     }
 
-    private FxSocketClient socket; //will it safe after closing the window?
-    private boolean connected;
+
 
 
 

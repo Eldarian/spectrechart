@@ -36,8 +36,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 public class CalibrationController {
 
     private JFreeChart chart;
-    private ChannelService channelService = new ChannelService();
-    private XYSeriesCollection dataset = channelService.calibrationDataset;
+    private XYSeriesCollection dataset = App.channelService.calibrationDataset;
 
     @FXML
     private ChartViewer lineChartViewer;
@@ -47,12 +46,14 @@ public class CalibrationController {
 
 
     @FXML
-    private void startDraw() throws InterruptedException {
+    private void startDraw() {
         if (channelsChooser.getValue() != null) {
             int channel = (Integer) channelsChooser.getValue();
-            channelService.clearChannel(channel);
+            App.channelService.clearChannel(channel);
             App.mode.currentChannel = channel;
-            App.device.notify();
+            String msg = "channel" + channel;
+            System.out.println("Sending " + msg);
+            App.socketConnector.sendMessage(msg);
         }
     }
 
@@ -161,7 +162,7 @@ public class CalibrationController {
                                                         "Time, s",
                                                         "Voltage, V",
                                                          dataset,
-                                                         PlotOrientation.HORIZONTAL,
+                                                         PlotOrientation.VERTICAL,
                                                         false,
                                                         true,
                                                         false);

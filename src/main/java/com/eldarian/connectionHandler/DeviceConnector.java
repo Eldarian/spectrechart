@@ -18,10 +18,13 @@ public class DeviceConnector implements Runnable {
     }
 
     public void run() {
-        try (
-                Socket socket = new Socket(address, port);
-                DataInputStream in = new DataInputStream(socket.getInputStream());
-                DataOutputStream out = new DataOutputStream(socket.getOutputStream())) {
+        try (Socket socket =
+                     new Socket(address, port);
+             DataInputStream in =
+                     new DataInputStream(socket.getInputStream());
+             DataOutputStream out =
+                     new DataOutputStream(socket.getOutputStream()))
+        {
             System.out.println("Connected");
             while(mode != ClientRequest.DISCONNECT) {
                 System.out.println(mode);

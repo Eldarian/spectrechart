@@ -67,9 +67,7 @@ public class HistogramController {
                                                 "channels",
                                                     "peaks",
                                                                 categoryDataset);
-
-
-            histogramChartViewer.setChart(barChart);
+        histogramChartViewer.setChart(barChart);
     }
 
     private void createHistogram() {

@@ -28,14 +28,18 @@ public class ChannelService {
 
     //Нужно наладить изменение только включённых функций.
 
-    public void handleData(String line) {
+    public synchronized void handleData(String line) throws InterruptedException{
         switch (App.mode) {
             case PEAKS:
                 histogramDataset.addValue(1, "",  line);
                 break;
             case CHANNEL:
-                calibrationDataset.getSeries(App.mode.currentChannel).add(timestamp, Double.parseDouble(line));
+                calibrationDataset.getSeries(App.mode.currentChannel).add(timestamp++, Double.parseDouble(line));
+                break;
         }
+        Thread.sleep(100);
+        App.socketConnector.sendMessage("ok");
+        System.out.println(line);
     }
 
     public void clearChannel(int channel) {

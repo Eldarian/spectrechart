@@ -4,6 +4,7 @@ import com.eldarian.channels.Channel;
 import com.eldarian.channels.ChannelService;
 import com.eldarian.connectionHandler.ClientRequest;
 import com.eldarian.connectionHandler.DeviceConnector;
+import com.eldarian.connectionHandler.SocketConnector;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -22,18 +23,19 @@ public class App extends Application {
 
     private static Scene scene;
 
-    public static ChannelService channelService;
+    public static ChannelService channelService = new ChannelService();
 
     public static volatile ClientRequest mode = ClientRequest.PEAKS;
 
     public static Thread device;
+
+    public static SocketConnector socketConnector = new SocketConnector();
 
     @Override
     public void start(Stage stage) throws IOException {
         scene = new Scene(loadFXML("histogramView"));
         stage.setScene(scene);
         stage.show();
-
         stage.setOnCloseRequest(windowEvent -> System.exit(0));
     }
 
@@ -48,8 +50,6 @@ public class App extends Application {
 
     public static void main(String[] args)
     {
-        device = new Thread(new DeviceConnector("127.0.0.1", 5000));
-        device.start();
         launch();
     }
 
