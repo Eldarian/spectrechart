@@ -1,20 +1,15 @@
 package com.eldarian;
 
-import com.eldarian.channels.Channel;
-import com.eldarian.channels.ChannelService;
-import com.eldarian.connectionHandler.ClientRequest;
-import com.eldarian.connectionHandler.DeviceConnector;
+import com.eldarian.channels.DatasetService;
+import com.eldarian.connectionHandler.SocketMode;
 import com.eldarian.connectionHandler.SocketConnector;
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * JavaFX App
@@ -22,18 +17,14 @@ import java.util.ArrayList;
 public class App extends Application {
 
     private static Scene scene;
-
-    public static ChannelService channelService = new ChannelService();
-
-    public static volatile ClientRequest mode = ClientRequest.PEAKS;
-
-    public static Thread device;
-
+    public static DatasetService datasetService = new DatasetService();
+    public static volatile SocketMode mode = SocketMode.PEAKS;
     public static SocketConnector socketConnector = new SocketConnector();
+    public static ConnectionDisplayState connectionState = ConnectionDisplayState.DISCONNECTED;
 
     @Override
     public void start(Stage stage) throws IOException {
-        scene = new Scene(loadFXML("histogramView"));
+        scene = new Scene(loadFXML("peaksView"));
         stage.setScene(scene);
         stage.show();
         stage.setOnCloseRequest(windowEvent -> System.exit(0));
@@ -48,9 +39,9 @@ public class App extends Application {
         return fxmlLoader.load();
     }
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         launch();
     }
+
 
 }

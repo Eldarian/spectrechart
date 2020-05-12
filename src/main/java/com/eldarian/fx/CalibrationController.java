@@ -10,15 +10,13 @@ import java.util.Locale;
 import java.util.Scanner;
 
 import com.eldarian.App;
-import com.eldarian.channels.ChannelService;
-import com.eldarian.connectionHandler.ClientRequest;
+import com.eldarian.connectionHandler.SocketMode;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -36,7 +34,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 public class CalibrationController {
 
     private JFreeChart chart;
-    private XYSeriesCollection dataset = App.channelService.calibrationDataset;
+    private XYSeriesCollection dataset = App.datasetService.calibrationDataset;
 
     @FXML
     private ChartViewer lineChartViewer;
@@ -47,9 +45,10 @@ public class CalibrationController {
 
     @FXML
     private void startDraw() {
+        App.mode = SocketMode.CHANNEL;
         if (channelsChooser.getValue() != null) {
             int channel = (Integer) channelsChooser.getValue();
-            App.channelService.clearChannel(channel);
+            App.datasetService.clearChannel(channel);
             App.mode.currentChannel = channel;
             String msg = "channel" + channel;
             System.out.println("Sending " + msg);
@@ -58,9 +57,14 @@ public class CalibrationController {
     }
 
     @FXML
+    private void freezeDraw() {
+            App.mode = SocketMode.FREEZED;
+    }
+
+    @FXML
     private void switchToHistogram() throws IOException {
-        App.mode = ClientRequest.PEAKS;
-        App.setRoot("histogramView");
+        App.mode = SocketMode.FREEZED;
+        App.setRoot("peaksView");
     }
 
     @FXML
@@ -81,8 +85,8 @@ public class CalibrationController {
     private void initialize() {
         insertChart();
         System.out.println("chart inserted");
-        autoShow();
-    }
+        channelsChooser.getSelectionModel().selectFirst();
+        autoShow(); }
 
     @FXML
     private void autoShow() {

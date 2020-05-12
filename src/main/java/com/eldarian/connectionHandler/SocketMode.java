@@ -1,6 +1,6 @@
 package com.eldarian.connectionHandler;
 
-public enum ClientRequest {
-    CHANNEL, PEAKS, DISCONNECT;
+public enum SocketMode {
+    CHANNEL, PEAKS, FREEZED;
     public int currentChannel = 1;
 }

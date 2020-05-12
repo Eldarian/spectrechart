@@ -1,6 +1,7 @@
 package com.eldarian.connectionHandler;
 
 import com.eldarian.App;
+import com.eldarian.ConnectionDisplayState;
 
 import java.lang.invoke.MethodHandles;
 import java.util.logging.Logger;
@@ -22,7 +23,7 @@ public class SocketConnector {
      * Synchronized method set up to wait until there is no socket connection.
      * When notifyDisconnected() is called, waiting will cease.
      */
-    public synchronized void waitForDisconnect() {
+    private synchronized void waitForDisconnect() {
         while (connected) {
             try {
                 wait();
@@ -35,7 +36,7 @@ public class SocketConnector {
      * Synchronized method responsible for notifying waitForDisconnect()
      * method that it's OK to stop waiting.
      */
-    public synchronized void notifyDisconnected() {
+    private synchronized void notifyDisconnected() {
         connected = false;
         notifyAll();
     }
@@ -43,7 +44,7 @@ public class SocketConnector {
     /*
      * Synchronized method to set isConnected boolean
      */
-    public synchronized void setIsConnected(boolean connected) {
+    private synchronized void setIsConnected(boolean connected) {
         this.connected = connected;
     }
 
@@ -66,6 +67,10 @@ public class SocketConnector {
         fxSocket.sendMessage(msg);
     }
 
+    public void shutdown() {
+        fxSocket.shutdown();
+    }
+
     class ShutDownThread extends Thread {
 
         @Override
@@ -85,7 +90,7 @@ public class SocketConnector {
         public void onMessage(String line) {
             if (line != null && !line.equals("")) {
                 try {
-                    App.channelService.handleData(line);
+                    App.datasetService.handleData(line);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -96,9 +101,10 @@ public class SocketConnector {
         public void onClosedStatus(boolean isClosed) {
             if (isClosed) {
                 notifyDisconnected();
-
+                App.connectionState = ConnectionDisplayState.DISCONNECTED;
             } else {
                 setIsConnected(true);
+                App.connectionState = ConnectionDisplayState.CONNECTED;
             }
         }
     }

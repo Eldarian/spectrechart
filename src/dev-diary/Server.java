@@ -7,75 +7,113 @@ import java.io.*;
 public class Server
 {
     //initialize socket and input stream
-    private Socket          socket   = null;
-    private ServerSocket    server   = null;
-    private BufferedReader in       =  null;
-    private BufferedWriter out = null;
-
+    private ServerSocket serverSocket = null;
     // constructor with port
-    public Server(int port)
-    {
-        // starts server and waits for a connection
-        try
-        {
-            server = new ServerSocket(port);
-            System.out.println("Server started");
 
-            System.out.println("Waiting for a client ...");
 
-            socket = server.accept();
-            System.out.println("Client accepted");
+    public void start(int port) throws IOException {
+        serverSocket = new ServerSocket(port);
+        System.out.println("Server started");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        while(true) {
+            new ClientHandler(serverSocket.accept()).start();
+        }
+    }
 
-            // takes input from the client socket
-            /*in = new DataInputStream(
-                    new BufferedInputStream(socket.getInputStream()));
-            out = new DataOutputStream(
-                    new BufferedOutputStream(socket.getOutputStream()));
-*/
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-            String line = "";
+    public void stop() throws IOException {
+        serverSocket.close();
+        System.out.println("Server stopped");
+    }
 
-            // reads message from client until "Over" is sent
-            double x = 0.0;
-            while (!line.equals("Disconnect"))
+    private static class ClientHandler extends Thread {
+        private Socket clientSocket;
+
+        public ClientHandler(Socket clientSocket) {
+            this.clientSocket = clientSocket;
+        }
+
+        public void run() {
+            // starts server and waits for a connection
+            try
             {
-                try
+                System.out.println("Client accepted");
+
+                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                BufferedWriter out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
+                String line;
+
+                double x = 0.0;
+                while (true)
                 {
-                    out.flush();
-                    line = in.readLine();
-                    if (line.equals("channel1")) {
-                        System.out.println("sending channel 1");
-                        do {
-                            String msg = "" + Math.round(Math.sin(x) * 4);
-                            System.out.println(msg);
-                            out.write(msg, 0, msg.length());
-                            out.newLine();
-                            out.flush();
-                            x++;
-                            line = in.readLine();
-                        } while(line.equals("ok"));
+                    try
+                    {
+                        out.flush();
+                        line = in.readLine();
+                        if (line == null) break;
+                        if (line.equals("channel1")) {
+                            System.out.println("sending channel 1");
+                            do {
+                                String msg = "" + Math.round(Math.sin(x) * 4);
+                                System.out.println(msg);
+                                out.write(msg, 0, msg.length());
+                                out.newLine();
+                                out.flush();
+                                x++;
+                                line = in.readLine();
+                                if (line == null) break;
+                            } while(line.equals("ok"));
+                        }
+                        if (line.equals("channel5")) {
+                            System.out.println("sending channel 5");
+                            do {
+                                String msg = "" + Math.round(Math.sin(x) * 5);
+                                System.out.println(msg);
+                                out.write(msg, 0, msg.length());
+                                out.newLine();
+                                out.flush();
+                                x++;
+                                line = in.readLine();
+                            } while(line.equals("ok"));
+                        }
+
+                        if (line.equals("peaks")) {
+                            System.out.println("sending peaks");
+                            do {
+                                String msg = "" + (int) (0 + Math.random()*17);
+                                System.out.println(msg);
+                                out.write(msg, 0, msg.length());
+                                out.newLine();
+                                out.flush();
+                                x++;
+                                line = in.readLine();
+                            } while(line.equals("ok"));
+                        }
+                    }
+                    catch(IOException i)
+                    {
+                        System.out.println(i);
                     }
                 }
-                catch(IOException i)
-                {
-                    System.out.println(i);
-                }
-            }
-            System.out.println("Closing connection");
+                System.out.println("Closing connection");
 
-            // close connection
-            socket.close();
-            in.close();
+                // close connection
+                clientSocket.close();
+                in.close();
+            }
+            catch(IOException i) {
+
+            }
         }
-        catch(IOException i)
-        {
-            //System.out.println(i);
-        }
+
     }
 
     public static void main(String args[])
     {
-        Server server = new Server(5000);
+        Server server = new Server();
+        try {
+            server.start(5000);
+        } catch (IOException e) {
+
+        }
     }
 }

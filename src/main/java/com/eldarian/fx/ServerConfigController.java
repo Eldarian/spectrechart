@@ -1,12 +1,18 @@
 package com.eldarian.fx;
 
 import com.eldarian.App;
+import com.eldarian.ConnectionDisplayState;
 import com.eldarian.connectionHandler.*;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
@@ -15,6 +21,8 @@ import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
 public class ServerConfigController{
+
+    private Timeline timeline;
 
     @FXML
     private TextField portTextField;
@@ -34,17 +42,13 @@ public class ServerConfigController{
     @FXML
     private void connectHandler() {
         App.socketConnector.connect(hostTextField.getText(), portTextField.getText());
-        displayState(ConnectionDisplayState.CONNECTED);
     }
 
     @FXML
     private void disconnectHandler() {
-
+        App.socketConnector.shutdown();
     }
 
-    public enum ConnectionDisplayState {
-        DISCONNECTED, ATTEMPTING, CONNECTED, AUTOCONNECTED, AUTOATTEMPTING
-    }
 
     private void displayState(ConnectionDisplayState state) {
         switch (state) {
@@ -72,8 +76,11 @@ public class ServerConfigController{
         }
     }
 
-
-
+    public void initialize() {
+        timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> displayState(App.connectionState)));
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
+    }
 
 
 }

@@ -50,6 +50,10 @@ public class Channel {
         return channelSeries;
     }
 
+    public void clearSeries() {
+        channelSeries.clear();
+    }
+
     public void setChannelSeries(XYSeries channelSeries) {
         this.channelSeries = channelSeries;
     }
