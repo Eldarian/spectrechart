@@ -48,7 +48,7 @@ public class PeaksController {
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setOpacity(1);
-        stage.setTitle("My New Stage Title");
+        stage.setTitle("Settings");
         stage.setScene(new Scene(root, 450, 450));
         stage.showAndWait();
     }
@@ -61,7 +61,7 @@ public class PeaksController {
     private  void createXYBar() {
         JFreeChart barChart = ChartFactory.createBarChart("barchart",
                                                 "channels",
-                                                    "peaks",
+                                                    "voltage",
                                             App.datasetService.peaksDataset);
         histogramChartViewer.setChart(barChart);
     }

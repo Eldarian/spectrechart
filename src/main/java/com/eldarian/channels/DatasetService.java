@@ -30,8 +30,10 @@ public class DatasetService {
     public synchronized void handleData(String line) throws InterruptedException{
         switch (App.mode) {
             case PEAKS:
+                String[] values = line.split(",");
                 if(line.equals("0")) break;
-                peaksDataset.incrementValue(1, "",  line);
+                //peaksDataset.incrementValue(1, "channel",  line);
+                peaksDataset.setValue(Double.parseDouble(values[1]), "channels", values[0]);
                 break;
             case CHANNEL:
                 calibrationDataset.getSeries(App.mode.currentChannel).add(timestamp++, Double.parseDouble(line));
@@ -54,7 +56,7 @@ public class DatasetService {
     public void clearPeaks() {
         peaksDataset = new DefaultCategoryDataset();
         for (int x = 1; x<=16; x++) {
-            peaksDataset.addValue(0, "", ""+x);
+            peaksDataset.addValue(0, "channels", ""+x);
         }
     }
 }

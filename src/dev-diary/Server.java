@@ -79,7 +79,7 @@ public class Server
                         if (line.equals("peaks")) {
                             System.out.println("sending peaks");
                             do {
-                                String msg = "" + (int) (0 + Math.random()*17);
+                                String msg = "" + (int) (0 + Math.random()*17) + "," + (0 + Math.random()*100);
                                 System.out.println(msg);
                                 out.write(msg, 0, msg.length());
                                 out.newLine();
