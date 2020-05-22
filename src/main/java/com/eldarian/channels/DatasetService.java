@@ -37,6 +37,9 @@ public class DatasetService {
                 break;
             case CHANNEL:
                 calibrationDataset.getSeries(App.mode.currentChannel).add(timestamp++, Double.parseDouble(line));
+                if (timestamp>50) {
+                    calibrationDataset.getSeries(App.mode.currentChannel).delete(0, 0);
+                }
                 break;
         }
         Thread.sleep(100);

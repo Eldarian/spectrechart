@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.*?>
 <?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
@@ -13,21 +15,35 @@
 <?import javafx.scene.layout.AnchorPane?>
 
 <?import org.jfree.chart.fx.ChartViewer?>
-<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.eldarian.fx.PeaksController">
+<VBox alignment="CENTER" spacing="20.0" style="-fx-background-color: #434343;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.eldarian.fx.PeaksController">
    <children>
-           <Label text="Histogram" />
-           <ChartViewer fx:id="histogramChartViewer" prefHeight="200.0" prefWidth="300.0" VBox.vgrow="ALWAYS"> </ChartViewer>
-           <ToolBar minWidth="500.0" prefHeight="41.0" prefWidth="933.0" VBox.vgrow="ALWAYS">
+           <ChartViewer fx:id="histogramChartViewer" prefHeight="429.0" prefWidth="933.0" VBox.vgrow="ALWAYS"> </ChartViewer>
+           <ToolBar minWidth="500.0" prefHeight="41.0" prefWidth="933.0" style="-fx-background-color: #434343;" VBox.vgrow="ALWAYS">
               <items>
-                      <Button mnemonicParsing="false" onAction="#startDraw" text="Start">
+                      <Button mnemonicParsing="false" onAction="#startDraw" style="-fx-background-color: #434343;" text="Start" textFill="WHITE">
                           <tooltip>
                               <Tooltip text="Начать отображение" />
                           </tooltip>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
                       </Button>
-                      <Button mnemonicParsing="false" onAction="#freezeDraw" text="Freeze" />
-                      <Button onAction="#switchToCalibrationView" prefWidth="104.0" text="Calibration" />
-                        <Button mnemonicParsing="false" text="Open File" />
-                      <Button alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#openSettingsWindow" text="Settings..." />
+                      <Button mnemonicParsing="false" onAction="#freezeDraw" style="-fx-background-color: #434343;" text="Hold" textFill="WHITE">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></Button>
+                      <Button onAction="#switchToCalibrationView" prefWidth="104.0" style="-fx-background-color: #434343;" text="Calibration" textFill="WHITE">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></Button>
+                        <Button mnemonicParsing="false" style="-fx-background-color: #434343;" text="Open File" textFill="WHITE">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></Button>
+                      <Button alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#openSettingsWindow" style="-fx-background-color: #434343;" text="Settings..." textFill="WHITE">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></Button>
               </items>
                <VBox.margin>
                    <Insets />

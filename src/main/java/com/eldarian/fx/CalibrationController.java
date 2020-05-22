@@ -22,6 +22,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.fx.ChartViewer;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
@@ -162,7 +164,7 @@ public class CalibrationController {
 
     private static JFreeChart createChart(XYDataset dataset) {
         JFreeChart chart = ChartFactory.createXYLineChart(
-                                                        "Calibration",
+                                                        "",
                                                         "Time, s",
                                                         "Voltage, V",
                                                          dataset,
@@ -172,7 +174,12 @@ public class CalibrationController {
                                                         false);
         String fontName = "Palatino";
         chart.getTitle().setFont(new Font(fontName, Font.BOLD, 18));
+        chart.setBackgroundPaint(new Color(67, 67, 67));
         XYPlot plot = (XYPlot) chart.getPlot();
+        NumberAxis lineAxis = (NumberAxis) plot.getDomainAxis();
+
+        lineAxis.setAutoRangeIncludesZero(false);
+
         plot.setBackgroundPaint(Color.BLACK);
         XYItemRenderer r = plot.getRenderer();
         if(r instanceof XYLineAndShapeRenderer) {
@@ -181,12 +188,11 @@ public class CalibrationController {
             renderer.setDrawSeriesLineAsPath(true);
             renderer.setAutoPopulateSeriesStroke(false);
             renderer.setDefaultStroke(new BasicStroke(3.0f));
-            renderer.setSeriesPaint(0, Color.RED);
+            renderer.setSeriesPaint(0, Color.GREEN);
             renderer.setSeriesLinesVisible(0, true);
             renderer.setSeriesShape(0, new Ellipse2D.Double(-3.0, -3.0, 6.0, 6.0));
             renderer.setSeriesShapesVisible(0, true);
             renderer.setSeriesShapesFilled(0, true);
-            renderer.setSeriesPaint(1, Color.BLUE);
         }
         return chart;
     }

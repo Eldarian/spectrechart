@@ -1,6 +1,8 @@
 package com.eldarian.fx;
 
+import java.awt.*;
 import java.io.IOException;
+import java.text.DecimalFormat;
 
 import com.eldarian.App;
 import com.eldarian.connectionHandler.SocketMode;
@@ -12,7 +14,14 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.fx.ChartViewer;
+import org.jfree.chart.labels.CategoryItemLabelGenerator;
+import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.renderer.category.StandardBarPainter;
 
 public class PeaksController {
 
@@ -59,10 +68,40 @@ public class PeaksController {
     }
 
     private  void createXYBar() {
-        JFreeChart barChart = ChartFactory.createBarChart("barchart",
+        JFreeChart barChart = ChartFactory.createBarChart("",
                                                 "channels",
                                                     "voltage",
                                             App.datasetService.peaksDataset);
+        barChart.setBackgroundPaint(new Color(67, 67, 67));
+        CategoryPlot barPlot = (CategoryPlot) barChart.getPlot();
+        CategoryAxis barAxis = barPlot.getDomainAxis();
+        ValueAxis sndAxis = barPlot.getRangeAxis();
+
+        Color axisColor = Color.white;
+
+        sndAxis.setLabelPaint(axisColor);
+        sndAxis.setTickLabelPaint(axisColor);
+        sndAxis.setAxisLinePaint(axisColor);
+        sndAxis.setTickMarkPaint(axisColor);
+
+        barAxis.setLabelPaint(axisColor);
+        barAxis.setTickLabelPaint(axisColor);
+        barAxis.setAxisLinePaint(axisColor);
+        barAxis.setTickMarkPaint(axisColor);
+
+        barPlot.setBackgroundPaint(Color.black);
+        BarRenderer barRenderer = (BarRenderer) barPlot.getRenderer();
+
+
+        CategoryItemLabelGenerator labelGenerator = new StandardCategoryItemLabelGenerator(
+                "{2}", new DecimalFormat("0.00"));
+        barRenderer.setDefaultItemLabelGenerator(labelGenerator);
+        barRenderer.setDefaultItemLabelPaint(Color.white);
+        barRenderer.setDefaultItemLabelsVisible(true);
+
+        barRenderer.setBarPainter(new StandardBarPainter());
+        barRenderer.setSeriesPaint(0, Color.orange);
+
         histogramChartViewer.setChart(barChart);
     }
 }
