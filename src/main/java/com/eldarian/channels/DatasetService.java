@@ -13,13 +13,14 @@ import java.util.*;
 public class DatasetService {
 
     private ArrayList<Channel> channels;
+    public int peaksOnScreen = 5;
 
     private File chartFile;
     private FileWriter peaksWriter;
     private List<Double> rawData = new ArrayList<>();
 
     public XYSeriesCollection scopeDataset = new XYSeriesCollection();
-    ArrayList<Integer> maxIndexes = new ArrayList<>();
+    private ArrayList<Integer> maxIndexes = new ArrayList<>();
 
     public DefaultCategoryDataset peaksDataset = new DefaultCategoryDataset();
     private int timestamp = 0;
@@ -39,23 +40,10 @@ public class DatasetService {
     public synchronized void handleData(String line) throws InterruptedException, IOException {
         switch (App.mode) {
             case PEAKS:
-                String[] values = line.split(",");
-                if (line.equals("0")) break;
-                peaksDataset.setValue(Double.parseDouble(values[1]), "channels", values[0]);
+                handlePeaks(line);
                 break;
             case SCOPE:
-                double doubleLine = Double.parseDouble(line);
-                if (rawData.size() > 0 && doubleLine < rawData.get(rawData.size() - 1) && rawData.get(rawData.size() - 1) > rawData.get(rawData.size() - 2)) {
-                    maxIndexes.add(rawData.size());
-                    System.out.println(rawData.size());
-                    if(maxIndexes.size()%5==0 && maxIndexes.size() > 0) {
-                        scopeDataset.getSeries(App.mode.currentChannel).clear();
-                        for(int i = maxIndexes.get(maxIndexes.size()-5); i < maxIndexes.get(maxIndexes.size()-1); i++){
-                            scopeDataset.getSeries(App.mode.currentChannel).add(timestamp++, rawData.get(i));
-                        }
-                    }
-                }
-                rawData.add(doubleLine);
+                handleScope(line);
                 break;
         }
         //peaksWriter.write(line);
@@ -88,6 +76,34 @@ public class DatasetService {
         peaksDataset = new DefaultCategoryDataset();
         for (int x = 1; x <= 16; x++) {
             peaksDataset.addValue(0, "channels", "" + x);
+        }
+    }
+
+    private void handlePeaks(String line) {
+        String[] values = line.split(",");
+        if (line.equals("0")) return;
+        peaksDataset.setValue(Double.parseDouble(values[1]), "channels", values[0]);
+    }
+
+    private void handleScope(String line) {
+        double currentValue = Double.parseDouble(line);
+        if (detectMax(currentValue)) {
+            maxIndexes.add(rawData.size());
+            updateSeries();
+        }
+        rawData.add(currentValue);
+    }
+
+    private boolean detectMax(double currentValue) {
+        return rawData.size() > 0 && currentValue < rawData.get(rawData.size() - 1) && rawData.get(rawData.size() - 1) > rawData.get(rawData.size() - 2);
+    }
+
+    private void updateSeries() {
+        if (maxIndexes.size() % peaksOnScreen == 0 && maxIndexes.size() > 0) {
+            scopeDataset.getSeries(App.mode.currentChannel).clear();
+            for (int i = maxIndexes.get(maxIndexes.size() - peaksOnScreen - 1); i < maxIndexes.get(maxIndexes.size() - 1); i++) {
+                scopeDataset.getSeries(App.mode.currentChannel).add(timestamp++, rawData.get(i));
+            }
         }
     }
 }
