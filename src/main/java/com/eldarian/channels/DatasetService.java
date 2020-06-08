@@ -8,7 +8,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.*;
 
 public class DatasetService {
 
@@ -16,8 +16,11 @@ public class DatasetService {
 
     private File chartFile;
     private FileWriter peaksWriter;
+    private List<Double> rawData = new ArrayList<>();
 
     public XYSeriesCollection scopeDataset = new XYSeriesCollection();
+    ArrayList<Integer> maxIndexes = new ArrayList<>();
+
     public DefaultCategoryDataset peaksDataset = new DefaultCategoryDataset();
     private int timestamp = 0;
 
@@ -26,7 +29,8 @@ public class DatasetService {
         for (int i = 1; i <= 16; i++) {
             channels.add(new Channel(i, 1));
             System.out.println("channel" + i + "added to array");
-            scopeDataset.addSeries(channels.get(i-1).getChannelSeries());
+            scopeDataset.addSeries(channels.get(i - 1).getChannelSeries());
+
         }
     }
 
@@ -36,20 +40,27 @@ public class DatasetService {
         switch (App.mode) {
             case PEAKS:
                 String[] values = line.split(",");
-                if(line.equals("0")) break;
-                //peaksDataset.incrementValue(1, "channel",  line);
+                if (line.equals("0")) break;
                 peaksDataset.setValue(Double.parseDouble(values[1]), "channels", values[0]);
                 break;
-            case CHANNEL:
-                scopeDataset.getSeries(App.mode.currentChannel).add(timestamp++, Double.parseDouble(line));
-                if (timestamp>50) {
-                    scopeDataset.getSeries(App.mode.currentChannel).delete(0, 0);
+            case SCOPE:
+                double doubleLine = Double.parseDouble(line);
+                if (rawData.size() > 0 && doubleLine < rawData.get(rawData.size() - 1) && rawData.get(rawData.size() - 1) > rawData.get(rawData.size() - 2)) {
+                    maxIndexes.add(rawData.size());
+                    System.out.println(rawData.size());
+                    if(maxIndexes.size()%5==0 && maxIndexes.size() > 0) {
+                        scopeDataset.getSeries(App.mode.currentChannel).clear();
+                        for(int i = maxIndexes.get(maxIndexes.size()-5); i < maxIndexes.get(maxIndexes.size()-1); i++){
+                            scopeDataset.getSeries(App.mode.currentChannel).add(timestamp++, rawData.get(i));
+                        }
+                    }
                 }
+                rawData.add(doubleLine);
                 break;
         }
-        peaksWriter.write(line);
-        Thread.sleep(100);
-        if (App.mode == SocketMode.FREEZED) {
+        //peaksWriter.write(line);
+        //Thread.sleep(100);
+        if (App.mode == SocketMode.STOP) {
             App.socketConnector.sendMessage("break");
             return;
         }
@@ -64,6 +75,8 @@ public class DatasetService {
         }
         timestamp = 0;
         channels.get(channel).clearSeries();
+        maxIndexes = new ArrayList<>();
+        rawData = new ArrayList<>();
     }
 
     public void clearPeaks(boolean toFile) throws IOException {
@@ -73,8 +86,8 @@ public class DatasetService {
             chartFile.deleteOnExit();
         }
         peaksDataset = new DefaultCategoryDataset();
-        for (int x = 1; x<=16; x++) {
-            peaksDataset.addValue(0, "channels", ""+x);
+        for (int x = 1; x <= 16; x++) {
+            peaksDataset.addValue(0, "channels", "" + x);
         }
     }
 }

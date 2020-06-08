@@ -23,7 +23,7 @@
         <ToolBar minWidth="500.0" prefHeight="41.0" prefWidth="933.0" style="-fx-background-color: #434343;"
                  VBox.vgrow="ALWAYS">
             <items>
-                <Button mnemonicParsing="false" onAction="#startDraw" style="-fx-background-color: #434343;"
+                <Button fx:id="startStopButton" mnemonicParsing="false" onAction="#startStop" style="-fx-background-color: #434343;"
                         text="Start" textFill="WHITE">
                     <tooltip>
                         <Tooltip text="Начать отображение"/>
@@ -32,7 +32,7 @@
                         <Cursor fx:constant="HAND"/>
                     </cursor>
                 </Button>
-                <Button mnemonicParsing="false" onAction="#freezeDraw" style="-fx-background-color: #434343;"
+                <Button mnemonicParsing="false" onAction="#hold" style="-fx-background-color: #434343;"
                         text="Hold" textFill="WHITE">
                     <cursor>
                         <Cursor fx:constant="HAND"/>

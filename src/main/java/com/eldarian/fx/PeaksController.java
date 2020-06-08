@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -33,13 +34,26 @@ public class PeaksController {
     private ChartViewer histogramChartViewer;
 
     @FXML
+    private Button startStopButton;
+
+    @FXML
     private void switchToScopeView() throws IOException {
-        App.mode = SocketMode.FREEZED;
+        App.mode = SocketMode.STOP;
         System.out.println(App.mode.currentChannel);
         App.setRoot("scopeView");
     }
 
     @FXML
+    private void startStop() throws IOException {
+        if (App.mode == SocketMode.SCOPE) {
+            stopDraw();
+            startStopButton.setText("Start");
+        } else {
+            startDraw();
+            startStopButton.setText("Stop");
+        }
+    }
+
     private void startDraw() throws IOException {
         App.mode = SocketMode.PEAKS;
         App.datasetService.clearPeaks(toFile.isSelected());
@@ -49,9 +63,13 @@ public class PeaksController {
         App.socketConnector.sendMessage(msg);
     }
 
+    private void stopDraw() {
+        App.mode = SocketMode.STOP;
+    }
+
     @FXML
-    private void freezeDraw() {
-        App.mode = SocketMode.FREEZED;
+    private void hold() {
+
     }
 
     @FXML

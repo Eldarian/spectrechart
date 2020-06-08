@@ -16,6 +16,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
@@ -48,10 +49,24 @@ public class ScopeController {
     @FXML
     private ChoiceBox channelsChooser;
 
+    @FXML
+    private Button startStopButton;
 
     @FXML
+    private void startStop() throws IOException {
+        if (App.mode == SocketMode.SCOPE) {
+            stopDraw();
+            startStopButton.setText("Start");
+        } else {
+            startDraw();
+            startStopButton.setText("Stop");
+        }
+    }
+
+
+
     private void startDraw() throws IOException {
-        App.mode = SocketMode.CHANNEL;
+        App.mode = SocketMode.SCOPE;
         if (channelsChooser.getValue() != null) {
             int channel = (Integer) channelsChooser.getValue();
             App.datasetService.clearChannel(channel, toFile.isSelected());
@@ -62,14 +77,20 @@ public class ScopeController {
         }
     }
 
+
+
+    private void stopDraw() {
+        App.mode = SocketMode.STOP;
+    }
+
     @FXML
-    private void freezeDraw() {
-        App.mode = SocketMode.FREEZED;
+    private void hold() {
+
     }
 
     @FXML
     private void switchToHistogram() throws IOException {
-        App.mode = SocketMode.FREEZED;
+        App.mode = SocketMode.STOP;
         App.setRoot("peaksView");
     }
 
@@ -141,28 +162,6 @@ public class ScopeController {
             }
         }
         dataset.addSeries(fileSeries);
-    }
-
-
-    private static XYSeriesCollection createExampleDataset() {
-        XYSeries channel1 = new XYSeries("series-1");
-        for (double x = 0; x < 60; x += 0.5) {
-            channel1.add(x, Math.sin(x) * 4);
-        }
-
-        /*
-         * XYSeries channel1 = channels.get(0).getChannelSeries();
-         * */
-
-        XYSeries channel2 = new XYSeries("series-2");
-        for (int x = 0; x < 10; x++) {
-            channel2.add(x, x + Math.random() * 4.0);
-        }
-
-        XYSeriesCollection dataset = new XYSeriesCollection();
-        dataset.addSeries(channel1);
-        dataset.addSeries(channel2);
-        return dataset;
     }
 
 
