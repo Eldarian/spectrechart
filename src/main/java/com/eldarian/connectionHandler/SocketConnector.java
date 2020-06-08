@@ -3,6 +3,7 @@ package com.eldarian.connectionHandler;
 import com.eldarian.App;
 import com.eldarian.ConnectionDisplayState;
 
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.logging.Logger;
 
@@ -15,8 +16,8 @@ public class SocketConnector {
 
 
     public SocketConnector() {
-            setIsConnected(false);
-            Runtime.getRuntime().addShutdownHook(new ShutDownThread());
+        setIsConnected(false);
+        Runtime.getRuntime().addShutdownHook(new ShutDownThread());
     }
 
     /*
@@ -91,7 +92,7 @@ public class SocketConnector {
             if (line != null && !line.equals("")) {
                 try {
                     App.datasetService.handleData(line);
-                } catch (InterruptedException e) {
+                } catch (InterruptedException | IOException e) {
                     e.printStackTrace();
                 }
             }

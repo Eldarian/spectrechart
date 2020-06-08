@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.CheckBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.jfree.chart.ChartFactory;
@@ -26,19 +27,22 @@ import org.jfree.chart.renderer.category.StandardBarPainter;
 public class PeaksController {
 
     @FXML
+    private CheckBox toFile;
+
+    @FXML
     private ChartViewer histogramChartViewer;
 
     @FXML
-    private void switchToCalibrationView() throws IOException {
+    private void switchToScopeView() throws IOException {
         App.mode = SocketMode.FREEZED;
         System.out.println(App.mode.currentChannel);
-        App.setRoot("calibrationView");
+        App.setRoot("scopeView");
     }
 
     @FXML
-    private void startDraw() {
+    private void startDraw() throws IOException {
         App.mode = SocketMode.PEAKS;
-        App.datasetService.clearPeaks();
+        App.datasetService.clearPeaks(toFile.isSelected());
         createXYBar();
         String msg = "peaks";
         System.out.println("Requesting " + msg);
@@ -47,7 +51,7 @@ public class PeaksController {
 
     @FXML
     private void freezeDraw() {
-            App.mode = SocketMode.FREEZED;
+        App.mode = SocketMode.FREEZED;
     }
 
     @FXML
@@ -67,11 +71,11 @@ public class PeaksController {
         createXYBar();
     }
 
-    private  void createXYBar() {
+    private void createXYBar() {
         JFreeChart barChart = ChartFactory.createBarChart("",
-                                                "channels",
-                                                    "voltage",
-                                            App.datasetService.peaksDataset);
+                "channels",
+                "voltage",
+                App.datasetService.peaksDataset);
         barChart.setBackgroundPaint(new Color(67, 67, 67));
         CategoryPlot barPlot = (CategoryPlot) barChart.getPlot();
         CategoryAxis barAxis = barPlot.getDomainAxis();

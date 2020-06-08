@@ -3,16 +3,21 @@ package com.eldarian.channels;
 import com.eldarian.App;
 import com.eldarian.connectionHandler.SocketMode;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class DatasetService {
 
-    public ArrayList<Channel> channels;
+    private ArrayList<Channel> channels;
 
-    public XYSeriesCollection calibrationDataset = new XYSeriesCollection();
+    private File chartFile;
+    private FileWriter peaksWriter;
+
+    public XYSeriesCollection scopeDataset = new XYSeriesCollection();
     public DefaultCategoryDataset peaksDataset = new DefaultCategoryDataset();
     private int timestamp = 0;
 
@@ -21,13 +26,13 @@ public class DatasetService {
         for (int i = 1; i <= 16; i++) {
             channels.add(new Channel(i, 1));
             System.out.println("channel" + i + "added to array");
-            calibrationDataset.addSeries(channels.get(i-1).getChannelSeries());
+            scopeDataset.addSeries(channels.get(i-1).getChannelSeries());
         }
     }
 
     //Нужно наладить изменение только включённых функций.
 
-    public synchronized void handleData(String line) throws InterruptedException{
+    public synchronized void handleData(String line) throws InterruptedException, IOException {
         switch (App.mode) {
             case PEAKS:
                 String[] values = line.split(",");
@@ -36,12 +41,13 @@ public class DatasetService {
                 peaksDataset.setValue(Double.parseDouble(values[1]), "channels", values[0]);
                 break;
             case CHANNEL:
-                calibrationDataset.getSeries(App.mode.currentChannel).add(timestamp++, Double.parseDouble(line));
+                scopeDataset.getSeries(App.mode.currentChannel).add(timestamp++, Double.parseDouble(line));
                 if (timestamp>50) {
-                    calibrationDataset.getSeries(App.mode.currentChannel).delete(0, 0);
+                    scopeDataset.getSeries(App.mode.currentChannel).delete(0, 0);
                 }
                 break;
         }
+        peaksWriter.write(line);
         Thread.sleep(100);
         if (App.mode == SocketMode.FREEZED) {
             App.socketConnector.sendMessage("break");
@@ -51,12 +57,21 @@ public class DatasetService {
         System.out.println(line);
     }
 
-    public void clearChannel(int channel) {
+    public void clearChannel(int channel, boolean toFile) throws IOException {
+        chartFile = File.createTempFile("scope-", ".tmp");
+        if (toFile) {
+            chartFile.deleteOnExit();
+        }
         timestamp = 0;
         channels.get(channel).clearSeries();
     }
 
-    public void clearPeaks() {
+    public void clearPeaks(boolean toFile) throws IOException {
+        chartFile = File.createTempFile("peaks-", ".tmp");
+        peaksWriter = new FileWriter(chartFile);
+        if (toFile) {
+            chartFile.deleteOnExit();
+        }
         peaksDataset = new DefaultCategoryDataset();
         for (int x = 1; x<=16; x++) {
             peaksDataset.addValue(0, "channels", ""+x);

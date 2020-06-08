@@ -16,6 +16,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
@@ -33,10 +34,13 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-public class CalibrationController {
+public class ScopeController {
 
     private JFreeChart chart;
-    private XYSeriesCollection dataset = App.datasetService.calibrationDataset;
+    private XYSeriesCollection dataset = App.datasetService.scopeDataset;
+
+    @FXML
+    private CheckBox toFile;
 
     @FXML
     private ChartViewer lineChartViewer;
@@ -46,11 +50,11 @@ public class CalibrationController {
 
 
     @FXML
-    private void startDraw() {
+    private void startDraw() throws IOException {
         App.mode = SocketMode.CHANNEL;
         if (channelsChooser.getValue() != null) {
             int channel = (Integer) channelsChooser.getValue();
-            App.datasetService.clearChannel(channel);
+            App.datasetService.clearChannel(channel, toFile.isSelected());
             App.mode.currentChannel = channel;
             String msg = "channel" + channel;
             System.out.println("Sending " + msg);
@@ -60,7 +64,7 @@ public class CalibrationController {
 
     @FXML
     private void freezeDraw() {
-            App.mode = SocketMode.FREEZED;
+        App.mode = SocketMode.FREEZED;
     }
 
     @FXML
@@ -82,13 +86,13 @@ public class CalibrationController {
     }
 
 
-
     @FXML
     private void initialize() {
         insertChart();
         System.out.println("chart inserted");
         channelsChooser.getSelectionModel().selectFirst();
-        autoShow(); }
+        autoShow();
+    }
 
     @FXML
     private void autoShow() {
@@ -107,7 +111,7 @@ public class CalibrationController {
     private void setChannel() {
         XYPlot plot = (XYPlot) chart.getPlot();
         XYItemRenderer itemRenderer = plot.getRenderer();
-        if(itemRenderer instanceof XYLineAndShapeRenderer) {
+        if (itemRenderer instanceof XYLineAndShapeRenderer) {
             for (int i = 0; i < 16; i++) {
                 XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) itemRenderer;
                 renderer.setSeriesShapesVisible(i, false);
@@ -124,14 +128,14 @@ public class CalibrationController {
         File file = new File(filePath.getText());
         //File file = new File("//home//dmitry", "testData.csv");
 
-        XYSeries fileSeries = new XYSeries("series-" + (dataset.getSeriesCount()+1));
+        XYSeries fileSeries = new XYSeries("series-" + (dataset.getSeriesCount() + 1));
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             Scanner scanner = new Scanner(reader.readLine());
             scanner.useDelimiter(",");
             scanner.useLocale(Locale.ENGLISH);
 
             double x = 0;
-            while(scanner.hasNext()) {
+            while (scanner.hasNext()) {
                 fileSeries.add(x, scanner.nextDouble());
                 x++;
             }
@@ -142,13 +146,13 @@ public class CalibrationController {
 
     private static XYSeriesCollection createExampleDataset() {
         XYSeries channel1 = new XYSeries("series-1");
-        for (double x = 0; x < 60; x+=0.5) {
-            channel1.add(x, Math.sin(x)*4);
+        for (double x = 0; x < 60; x += 0.5) {
+            channel1.add(x, Math.sin(x) * 4);
         }
 
         /*
-        * XYSeries channel1 = channels.get(0).getChannelSeries();
-        * */
+         * XYSeries channel1 = channels.get(0).getChannelSeries();
+         * */
 
         XYSeries channel2 = new XYSeries("series-2");
         for (int x = 0; x < 10; x++) {
@@ -164,14 +168,14 @@ public class CalibrationController {
 
     private static JFreeChart createChart(XYDataset dataset) {
         JFreeChart chart = ChartFactory.createXYLineChart(
-                                                        "",
-                                                        "Time, s",
-                                                        "Voltage, V",
-                                                         dataset,
-                                                         PlotOrientation.VERTICAL,
-                                                        false,
-                                                        true,
-                                                        false);
+                "",
+                "Time, s",
+                "Voltage, V",
+                dataset,
+                PlotOrientation.VERTICAL,
+                false,
+                true,
+                false);
         String fontName = "Palatino";
         chart.getTitle().setFont(new Font(fontName, Font.BOLD, 18));
         chart.setBackgroundPaint(new Color(67, 67, 67));
@@ -182,8 +186,24 @@ public class CalibrationController {
 
         plot.setBackgroundPaint(Color.BLACK);
         XYItemRenderer r = plot.getRenderer();
-        if(r instanceof XYLineAndShapeRenderer) {
+        if (r instanceof XYLineAndShapeRenderer) {
             XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) r;
+            ValueAxis yAxis = plot.getRangeAxis();
+            ValueAxis xAxis = plot.getDomainAxis();
+
+            Color axisColor = Color.white;
+
+            yAxis.setLabelPaint(axisColor);
+            yAxis.setTickLabelPaint(axisColor);
+            yAxis.setAxisLinePaint(axisColor);
+            yAxis.setTickMarkPaint(axisColor);
+
+            xAxis.setLabelPaint(axisColor);
+            xAxis.setTickLabelPaint(axisColor);
+            xAxis.setAxisLinePaint(axisColor);
+            xAxis.setTickMarkPaint(axisColor);
+
+
             renderer.setDefaultShapesVisible(false);
             renderer.setDrawSeriesLineAsPath(true);
             renderer.setAutoPopulateSeriesStroke(false);
