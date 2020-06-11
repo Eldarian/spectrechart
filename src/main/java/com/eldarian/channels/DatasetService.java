@@ -14,6 +14,12 @@ public class DatasetService {
 
     private ArrayList<Channel> channels;
     public int peaksOnScreen = 5;
+    public int delay = 10;
+    public int frameWidth = 100;
+    public double scopeThreshold = 1.0;
+    public int startIndex = 0;
+    public int frameIndex;
+    public boolean isPeakRegistered = false;
 
     private File chartFile;
     private FileWriter peaksWriter;
@@ -31,7 +37,6 @@ public class DatasetService {
             channels.add(new Channel(i, 1));
             System.out.println("channel" + i + "added to array");
             scopeDataset.addSeries(channels.get(i - 1).getChannelSeries());
-
         }
     }
 
@@ -47,7 +52,7 @@ public class DatasetService {
                 break;
         }
         //peaksWriter.write(line);
-        //Thread.sleep(100);
+        Thread.sleep(delay);
         if (App.mode == SocketMode.STOP) {
             App.socketConnector.sendMessage("break");
             return;
@@ -61,10 +66,13 @@ public class DatasetService {
         if (toFile) {
             chartFile.deleteOnExit();
         }
+        startIndex = 0;
         timestamp = 0;
+        frameIndex = 0;
         channels.get(channel).clearSeries();
         maxIndexes = new ArrayList<>();
         rawData = new ArrayList<>();
+        isPeakRegistered = false;
     }
 
     public void clearPeaks(boolean toFile) throws IOException {
@@ -86,24 +94,44 @@ public class DatasetService {
     }
 
     private void handleScope(String line) {
-        double currentValue = Double.parseDouble(line);
-        if (detectMax(currentValue)) {
-            maxIndexes.add(rawData.size());
-            updateSeries();
+        double newValue = Double.parseDouble(line);
+        rawData.add(newValue);
+        int index = startIndex;
+        if (startIndex + frameWidth < rawData.size()) {
+            while (index < rawData.size()) {
+                System.out.println(index);
+                if (detectFront(index)  && !isPeakRegistered) {
+                    updateSeries();
+                    startIndex = index;
+                    isPeakRegistered = true;
+                    break;
+                }
+                if(detectDrop(index) && isPeakRegistered) {
+                    isPeakRegistered = false;
+                }
+                index++;
+            }
         }
-        rawData.add(currentValue);
+        //scopeDataset.getSeries(2).add(timestamp++, newValue);
     }
 
-    private boolean detectMax(double currentValue) {
-        return rawData.size() > 0 && currentValue < rawData.get(rawData.size() - 1) && rawData.get(rawData.size() - 1) > rawData.get(rawData.size() - 2);
+    private boolean detectDrop(int index) {
+        boolean lessThanThreshold = rawData.get(index) < scopeThreshold;
+        boolean isFalling = ((index - 2) > 0) && (rawData.get(index) < rawData.get(index - 1))/*&& (rawData.get(index - 1) > rawData.get(index - 2))*/;
+        return lessThanThreshold && isFalling;
+    }
+
+    private boolean detectFront(int index) {
+        boolean moreThanThreshold = rawData.get(index) > scopeThreshold;
+        boolean isGrowing = ((index - 2) > 0) && (rawData.get(index) > rawData.get(index - 1)) /*&& (rawData.get(index - 1) > rawData.get(index - 2))*/;
+        return moreThanThreshold && isGrowing;
     }
 
     private void updateSeries() {
-        if (maxIndexes.size() % peaksOnScreen == 0 && maxIndexes.size() > 0) {
-            scopeDataset.getSeries(App.mode.currentChannel).clear();
-            for (int i = maxIndexes.get(maxIndexes.size() - peaksOnScreen - 1); i < maxIndexes.get(maxIndexes.size() - 1); i++) {
-                scopeDataset.getSeries(App.mode.currentChannel).add(timestamp++, rawData.get(i));
-            }
+        scopeDataset.getSeries(App.mode.currentChannel).clear();
+        for(int i = startIndex; i < startIndex + frameWidth - 1; i++) {
+            scopeDataset.getSeries(App.mode.currentChannel).add(i, rawData.get(i));
         }
+        System.out.println("Frame-" + frameIndex++);
     }
 }

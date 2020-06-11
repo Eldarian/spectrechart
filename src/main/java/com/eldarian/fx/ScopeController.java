@@ -192,6 +192,8 @@ public class ScopeController {
 
             Color axisColor = Color.white;
 
+            //plot.setDomainGridlinesVisible(false);
+
             yAxis.setLabelPaint(axisColor);
             yAxis.setTickLabelPaint(axisColor);
             yAxis.setAxisLinePaint(axisColor);
@@ -202,6 +204,8 @@ public class ScopeController {
             xAxis.setAxisLinePaint(axisColor);
             xAxis.setTickMarkPaint(axisColor);
 
+            //xAxis.setTickMarksVisible(false);
+            //xAxis.setTickLabelsVisible(false);
 
             renderer.setDefaultShapesVisible(false);
             renderer.setDrawSeriesLineAsPath(true);

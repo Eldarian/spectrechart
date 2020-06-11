@@ -1,4 +1,4 @@
-package com.eldarian;
+package com.eldarian.studying;
 
 // A Java program for a Server
 import java.net.*;
@@ -51,27 +51,44 @@ public class Server
                         line = in.readLine();
                         if (line == null) break;
                         if (line.equals("channel1")) {
+                            int count = 0;
                             System.out.println("sending channel 1");
                             do {
-                                String msg = "" + Math.round(Math.sin(x) * 4);
+                                String msg;
+                                if(count < 1000) {
+                                    msg = "" + (Math.sin(x) * 4);
+                                } else if (count < 2000) {
+                                    msg = "" + (Math.sin(x*3) * 4);
+                                } else {
+                                    msg = "" + (Math.sin(x*5) * 6);
+                                }
                                 System.out.println(msg);
                                 out.write(msg, 0, msg.length());
                                 out.newLine();
                                 out.flush();
-                                x++;
+                                x+=0.1;
+                                count++;
                                 line = in.readLine();
                                 if (line == null) break;
                             } while(line.equals("ok"));
                         }
                         if (line.equals("channel5")) {
                             System.out.println("sending channel 5");
+                            int count = 0;
                             do {
-                                String msg = "" + Math.round(Math.sin(x) * 5);
+                                String msg;
+                                if(count < 2) {
+                                    msg = "" + 5;
+                                } else {
+                                    msg = "" + 0;
+                                    if (count == 3) count=-1;
+                                }
                                 System.out.println(msg);
                                 out.write(msg, 0, msg.length());
                                 out.newLine();
                                 out.flush();
-                                x++;
+                                x+=0.1;
+                                count++;
                                 line = in.readLine();
                             } while(line.equals("ok"));
                         }
