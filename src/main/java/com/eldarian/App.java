@@ -26,6 +26,8 @@ public class App extends Application {
     public void start(Stage stage) throws IOException {
         scene = new Scene(loadFXML("peaksView"));
         stage.setScene(scene);
+        stage.setMinWidth(800.0);
+        stage.setMinHeight(600.0);
         stage.show();
         stage.setOnCloseRequest(windowEvent -> System.exit(0));
     }
