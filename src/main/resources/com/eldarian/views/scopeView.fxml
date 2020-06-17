@@ -17,6 +17,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <?import org.jfree.chart.fx.ChartViewer?>
+<?import javafx.scene.control.TextField?>
 <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="800.0" prefHeight="600.0" prefWidth="800.0" spacing="20.0" style="-fx-background-color: #434343;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.eldarian.fx.ScopeController">
     <children>
         <ChartViewer fx:id="lineChartViewer" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
@@ -61,6 +62,7 @@
                                   <Integer fx:value="14" />
                                   <Integer fx:value="15" />
                                   <Integer fx:value="16" />
+                                  <Integer fx:value="17" />
                               </FXCollections>
                           </items>
                           <cursor>
@@ -70,6 +72,8 @@
                               <Tooltip text="Empty Tooltip" />
                           </tooltip>
                       </ChoiceBox>
+                      <TextField fx:id="filePath"/>
+                      <Button onAction="#getFromFile" text="get"/>
                       <Button mnemonicParsing="false" style="-fx-background-color: #434343;" text="Open File" textFill="WHITE">
                           <cursor>
                               <Cursor fx:constant="HAND" />

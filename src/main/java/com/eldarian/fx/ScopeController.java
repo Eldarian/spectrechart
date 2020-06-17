@@ -147,21 +147,32 @@ public class ScopeController {
     @FXML
     private void getFromFile() throws IOException {
         File file = new File(filePath.getText());
-        //File file = new File("//home//dmitry", "testData.csv");
+        //File file = new File("C:\\Users\\Eldarian\\Documents\\spectrechart\\src\\main\\resources\\com\\eldarian\\mem4_ch1.csv");
 
-        XYSeries fileSeries = new XYSeries("series-" + (dataset.getSeriesCount() + 1));
+        //XYSeries fileSeries = new XYSeries("channel-" + (/*dataset.getSeriesCount() + */17));
+        XYSeries fileSeries = dataset.getSeries(1);
+        fileSeries.clear();
+        System.out.println(fileSeries.getKey());
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            //reader.readLine();
+            //reader.readLine();
+            //reader.readLine();
             Scanner scanner = new Scanner(reader.readLine());
-            scanner.useDelimiter(",");
-            scanner.useLocale(Locale.ENGLISH);
+            int x = 0;
+            while (scanner.hasNext() && x<5000) {
+                scanner.useDelimiter(";");
+                scanner.useLocale(Locale.ENGLISH);
+                //scanner.next();
+                int newValue = scanner.nextInt();
+                //double fileTimestamp = scanner.nextDouble();
 
-            double x = 0;
-            while (scanner.hasNext()) {
-                fileSeries.add(x, scanner.nextDouble());
+                fileSeries.add(x, newValue);
+                //System.out.println(newValue);
                 x++;
+                scanner = new Scanner(reader.readLine());
             }
         }
-        dataset.addSeries(fileSeries);
+        //dataset.addSeries(fileSeries);
     }
 
 
