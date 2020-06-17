@@ -10,6 +10,6 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.eldarian.fx.ErrorViewController"
             prefHeight="400.0" prefWidth="600.0">
-    <Label fx:id="message"></Label>
-    <Button onAction="#closeScene" text="OK"></Button>
+    <Label fx:id="message"/>
+    <Button onAction="#closeScene" text="OK"/>
 </AnchorPane>

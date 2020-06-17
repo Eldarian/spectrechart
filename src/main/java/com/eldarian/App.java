@@ -7,9 +7,13 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * JavaFX App
@@ -21,7 +25,7 @@ public class App extends Application {
     public static volatile SocketMode mode = SocketMode.PEAKS;
     public static SocketConnector socketConnector = new SocketConnector();
     public static ConnectionDisplayState connectionState = ConnectionDisplayState.DISCONNECTED;
-
+    private static ArrayList<String> errorList = new ArrayList<>();
     @Override
     public void start(Stage stage) throws IOException {
         scene = new Scene(loadFXML("peaksView"));
@@ -40,6 +44,21 @@ public class App extends Application {
     private static Parent loadFXML(String fxml) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("views/" + fxml + ".fxml"));
         return fxmlLoader.load();
+    }
+
+    public static void openErrorWindow(String message){
+        //FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/eldarian/views/ErrorView.fxml"));
+        //Parent root = fxmlLoader.load();
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setOpacity(1);
+        stage.setTitle("Error");
+        AnchorPane root = new AnchorPane();
+        Label text = new Label();
+        text.setText(message);
+        root.getChildren().add(text);
+        stage.setScene(new Scene(root, 450, 450));
+        stage.showAndWait();
     }
 
     public static void main(String[] args) {

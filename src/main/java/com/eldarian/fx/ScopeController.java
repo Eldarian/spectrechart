@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.InputMismatchException;
 import java.util.Locale;
 import java.util.Scanner;
 
@@ -161,7 +162,7 @@ public class ScopeController {
     private TextField filePath;
 
     @FXML
-    private void getFromFile() throws IOException {
+    private void getFromFile() {
         File file = new File(filePath.getText());
         //File file = new File("C:\\Users\\Eldarian\\Documents\\spectrechart\\src\\main\\resources\\com\\eldarian\\mem4_ch1.csv");
 
@@ -169,25 +170,22 @@ public class ScopeController {
         XYSeries fileSeries = dataset.getSeries(1);
         fileSeries.clear();
         System.out.println(fileSeries.getKey());
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            //reader.readLine();
-            //reader.readLine();
-            //reader.readLine();
-            Scanner scanner = new Scanner(reader.readLine());
+        try {
+            Scanner scanner = new Scanner(file);
             int x = 0;
             while (scanner.hasNext() && x<5000) {
-                scanner.useDelimiter(";");
+                scanner.useDelimiter("\n");
                 scanner.useLocale(Locale.ENGLISH);
-                //scanner.next();
-                int newValue = scanner.nextInt();
+                double newValue = scanner.nextDouble();
                 //double fileTimestamp = scanner.nextDouble();
-
                 fileSeries.add(x, newValue);
-                //System.out.println(newValue);
                 x++;
-                scanner = new Scanner(reader.readLine());
             }
-        }
+        } catch (IOException e) {
+            App.openErrorWindow(e.getMessage());
+        } /*catch (Exception e) {
+            App.openErrorWindow(e.toString());
+        }*/
         //dataset.addSeries(fileSeries);
     }
 
