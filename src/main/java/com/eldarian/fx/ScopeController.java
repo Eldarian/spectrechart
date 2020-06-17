@@ -174,7 +174,6 @@ public class ScopeController {
             Scanner scanner = new Scanner(file);
             int x = 0;
             while (scanner.hasNext() && x<5000) {
-                scanner.useDelimiter("\n");
                 scanner.useLocale(Locale.ENGLISH);
                 double newValue = scanner.nextDouble();
                 //double fileTimestamp = scanner.nextDouble();
