@@ -45,7 +45,7 @@ public class PeaksController {
 
     @FXML
     private void startStop() throws IOException {
-        if (App.mode == SocketMode.SCOPE) {
+        if (App.mode == SocketMode.PEAKS) {
             stopDraw();
             startStopButton.setText("Start");
         } else {

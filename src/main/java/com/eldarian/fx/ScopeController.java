@@ -69,11 +69,27 @@ public class ScopeController {
         App.mode = SocketMode.SCOPE;
         if (channelsChooser.getValue() != null) {
             int channel = (Integer) channelsChooser.getValue();
+            changeChannel(channel);
             App.datasetService.clearChannel(channel, toFile.isSelected());
             App.mode.currentChannel = channel;
             String msg = "channel" + channel;
             System.out.println("Sending " + msg);
             App.socketConnector.sendMessage(msg);
+        }
+    }
+
+    private void changeChannel(int newChannel) {
+        XYPlot plot = chart.getXYPlot();
+        XYItemRenderer r = plot.getRenderer();
+        if (r instanceof XYLineAndShapeRenderer) {
+            XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) r;
+            for (int i = 0; i < dataset.getSeriesCount(); i++) {
+                if (i == newChannel) {
+                    renderer.setSeriesVisible(i, true);
+                    continue;
+                }
+                renderer.setSeriesVisible(i, false);
+            }
         }
     }
 
