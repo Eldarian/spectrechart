@@ -2,10 +2,7 @@ package com.eldarian.fx;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.InputMismatchException;
 import java.util.Locale;
 import java.util.Scanner;
@@ -20,9 +17,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.apache.commons.io.ByteOrderMark;
+import org.apache.commons.io.input.BOMInputStream;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
@@ -65,7 +66,6 @@ public class ScopeController {
     }
 
 
-
     private void startDraw() throws IOException {
         App.mode = SocketMode.SCOPE;
         if (channelsChooser.getValue() != null) {
@@ -93,7 +93,6 @@ public class ScopeController {
             }
         }
     }
-
 
 
     private void stopDraw() {
@@ -162,6 +161,9 @@ public class ScopeController {
     private TextField filePath;
 
     @FXML
+    private ChoiceBox encoding;
+
+    @FXML
     private void getFromFile() {
         File file = new File(filePath.getText());
         //File file = new File("C:\\Users\\Eldarian\\Documents\\spectrechart\\src\\main\\resources\\com\\eldarian\\mem4_ch1.csv");
@@ -169,23 +171,43 @@ public class ScopeController {
         //XYSeries fileSeries = new XYSeries("channel-" + (/*dataset.getSeriesCount() + */17));
         XYSeries fileSeries = dataset.getSeries(1);
         fileSeries.clear();
-        System.out.println(fileSeries.getKey());
-        try {
-            Scanner scanner = new Scanner(file);
+        String pattern = "\\s";
+        if (encoding.getValue().equals("UTF-8 BOM")) {
+            try (BufferedReader br = new BufferedReader(
+                    new InputStreamReader(new BOMInputStream(new FileInputStream(
+                            file), false, ByteOrderMark.UTF_8,
+                            ByteOrderMark.UTF_16BE, ByteOrderMark.UTF_16LE,
+                            ByteOrderMark.UTF_32BE, ByteOrderMark.UTF_32LE)))) {
+                // use br here
+                String currentLine;
+                int x = 0;
+                while ((currentLine = br.readLine()) != null && x < 5000) {
+                    double newValue = Double.parseDouble(currentLine);
+                    fileSeries.add(x, newValue);
+                    x++;
+                }
+            } catch (Exception e) {
+                App.openErrorWindow(e.getMessage() + ", " + e.toString());
+            }
+        } else {
+
+        try (Scanner scanner = new Scanner(file, (String) encoding.getValue())) {
             int x = 0;
-            while (scanner.hasNext() && x<5000) {
+            while (scanner.hasNext() && x < 5000) {
+                scanner.skip(pattern);
                 scanner.useLocale(Locale.ENGLISH);
                 double newValue = scanner.nextDouble();
                 //double fileTimestamp = scanner.nextDouble();
+                //System.out.println(scanner.nextLine());
                 fileSeries.add(x, newValue);
                 x++;
             }
         } catch (IOException e) {
             App.openErrorWindow(e.getMessage());
-        } /*catch (Exception e) {
+        } catch (Exception e) {
             App.openErrorWindow(e.toString());
-        }*/
-        //dataset.addSeries(fileSeries);
+        }
+        }
     }
 
 
@@ -234,7 +256,8 @@ public class ScopeController {
             renderer.setDefaultShapesVisible(false);
             renderer.setDrawSeriesLineAsPath(true);
             renderer.setAutoPopulateSeriesStroke(false);
-            renderer.setDefaultStroke(new BasicStroke(3.0f));
+            renderer.setDefaultStroke(new BasicStroke(1.0f));
+            renderer.setDataBoundsIncludesVisibleSeriesOnly(true);
             renderer.setSeriesPaint(0, Color.GREEN);
             renderer.setSeriesLinesVisible(0, true);
             renderer.setSeriesShape(0, new Ellipse2D.Double(-3.0, -3.0, 6.0, 6.0));
