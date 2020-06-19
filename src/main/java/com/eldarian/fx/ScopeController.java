@@ -20,6 +20,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.commons.io.ByteOrderMark;
@@ -128,6 +129,7 @@ public class ScopeController {
         insertChart();
         System.out.println("chart inserted");
         channelsChooser.getSelectionModel().selectFirst();
+        encoding.getSelectionModel().selectFirst();
         autoShow();
     }
 
@@ -157,56 +159,67 @@ public class ScopeController {
         }
     }
 
-    @FXML
-    private TextField filePath;
+    /*@FXML
+    private TextField filePath;*/
 
     @FXML
     private ChoiceBox encoding;
 
+    File fileForReading;
+
+    final FileChooser fileChooser = new FileChooser();
+
     @FXML
     private void getFromFile() {
-        File file = new File(filePath.getText());
-        //File file = new File("C:\\Users\\Eldarian\\Documents\\spectrechart\\src\\main\\resources\\com\\eldarian\\mem4_ch1.csv");
+        fileChooser.setTitle("Open File");
+        fileForReading = fileChooser.showOpenDialog(new Stage());
+        if (fileForReading != null) {
+            /*filePath.clear();
+            filePath.appendText(file.getAbsolutePath());
+*/
+            //fileForReading = new File(filePath.getText());
+            //fileForReading = new File("C:\\Users\\Eldarian\\Documents\\spectrechart\\src\\main\\resources\\com\\eldarian\\mem4_ch1.csv");
 
-        //XYSeries fileSeries = new XYSeries("channel-" + (/*dataset.getSeriesCount() + */17));
-        XYSeries fileSeries = dataset.getSeries(1);
-        fileSeries.clear();
-        String pattern = "\\s";
-        if (encoding.getValue().equals("UTF-8 BOM")) {
-            try (BufferedReader br = new BufferedReader(
-                    new InputStreamReader(new BOMInputStream(new FileInputStream(
-                            file), false, ByteOrderMark.UTF_8,
-                            ByteOrderMark.UTF_16BE, ByteOrderMark.UTF_16LE,
-                            ByteOrderMark.UTF_32BE, ByteOrderMark.UTF_32LE)))) {
-                // use br here
-                String currentLine;
-                int x = 0;
-                while ((currentLine = br.readLine()) != null && x < 5000) {
-                    double newValue = Double.parseDouble(currentLine);
-                    fileSeries.add(x, newValue);
-                    x++;
+            //XYSeries fileSeries = new XYSeries("channel-" + (/*dataset.getSeriesCount() + */17));
+            XYSeries fileSeries = dataset.getSeries(1);
+            fileSeries.clear();
+            String pattern = "\\s";
+            if (encoding.getValue().equals("UTF-8 BOM")) {
+                try (BufferedReader br = new BufferedReader(
+                        new InputStreamReader(new BOMInputStream(new FileInputStream(
+                                fileForReading), false, ByteOrderMark.UTF_8,
+                                ByteOrderMark.UTF_16BE, ByteOrderMark.UTF_16LE,
+                                ByteOrderMark.UTF_32BE, ByteOrderMark.UTF_32LE)))) {
+                    // use br here
+                    String currentLine;
+                    int x = 0;
+                    while ((currentLine = br.readLine()) != null && x < 5000) {
+                        double newValue = Double.parseDouble(currentLine);
+                        fileSeries.add(x, newValue);
+                        x++;
+                    }
+                } catch (Exception e) {
+                    App.openErrorWindow(e.getMessage() + ", " + e.toString());
                 }
-            } catch (Exception e) {
-                App.openErrorWindow(e.getMessage() + ", " + e.toString());
-            }
-        } else {
+            } else {
 
-        try (Scanner scanner = new Scanner(file, (String) encoding.getValue())) {
-            int x = 0;
-            while (scanner.hasNext() && x < 5000) {
-                scanner.skip(pattern);
-                scanner.useLocale(Locale.ENGLISH);
-                double newValue = scanner.nextDouble();
-                //double fileTimestamp = scanner.nextDouble();
-                //System.out.println(scanner.nextLine());
-                fileSeries.add(x, newValue);
-                x++;
+                try (Scanner scanner = new Scanner(fileForReading, (String) encoding.getValue())) {
+                    int x = 0;
+                    while (scanner.hasNext() && x < 5000) {
+                        scanner.skip(pattern);
+                        scanner.useLocale(Locale.ENGLISH);
+                        double newValue = scanner.nextDouble();
+                        //double fileTimestamp = scanner.nextDouble();
+                        //System.out.println(scanner.nextLine());
+                        fileSeries.add(x, newValue);
+                        x++;
+                    }
+                } catch (IOException e) {
+                    App.openErrorWindow(e.getMessage());
+                } catch (Exception e) {
+                    App.openErrorWindow(e.toString());
+                }
             }
-        } catch (IOException e) {
-            App.openErrorWindow(e.getMessage());
-        } catch (Exception e) {
-            App.openErrorWindow(e.toString());
-        }
         }
     }
 

@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -29,7 +30,8 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         scene = new Scene(loadFXML("peaksView"));
-        //stage.setTitle("Spectrum");
+        stage.setTitle("THz Spectrum Tools");
+        stage.getIcons().add(new Image(App.class.getResourceAsStream("logoRB-big.png")));
         stage.setScene(scene);
         stage.setMinWidth(800.0);
         stage.setMinHeight(600.0);
