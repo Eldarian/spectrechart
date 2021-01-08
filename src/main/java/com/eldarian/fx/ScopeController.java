@@ -170,7 +170,7 @@ public class ScopeController {
     final FileChooser fileChooser = new FileChooser();
 
     @FXML
-    private void getFromFile() {
+    private void getFromFile() { //TODO split to submethods
         fileChooser.setTitle("Open File");
         fileForReading = fileChooser.showOpenDialog(new Stage());
         if (fileForReading != null) {

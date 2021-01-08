@@ -14,6 +14,9 @@
 <?import javafx.scene.layout.VBox?>
 
 <?import org.jfree.chart.fx.ChartViewer?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
 <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="800.0" style="-fx-background-color: #434343;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.eldarian.fx.PeaksController">
     <children>
         <ChartViewer fx:id="histogramChartViewer" VBox.vgrow="ALWAYS" />
@@ -39,11 +42,28 @@
                               <Cursor fx:constant="HAND" />
                           </cursor>
                       </Button>
-                      <Button mnemonicParsing="false" style="-fx-background-color: #434343;" text="Open File..." textFill="WHITE">
+                      <Button mnemonicParsing="false" style="-fx-background-color: #434343;" text="Open File..." onAction="#getFromFile" textFill="WHITE">
                           <cursor>
                               <Cursor fx:constant="HAND" />
                           </cursor>
                       </Button>
+
+                      <ChoiceBox fx:id="encoding" prefHeight="31.0" prefWidth="70.0"
+                                 style="-fx-background-color: #434343;" stylesheets="@calibrationStyle.css">
+                          <tooltip>
+                              <Tooltip text="Select file encoding"/>
+                          </tooltip>
+                          <cursor>
+                              <Cursor fx:constant="HAND"/>
+                          </cursor>
+                          <items>
+                              <FXCollections fx:factory="observableArrayList">
+                                  <String fx:value="UTF-8"/>
+                                  <String fx:value="UTF-8 BOM"/>
+                                  <String fx:value="UTF-16"/>
+                              </FXCollections>
+                          </items>
+                      </ChoiceBox>
                       <Button alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#openSettingsWindow" style="-fx-background-color: #434343;" text="Settings..." textFill="WHITE">
                           <cursor>
                               <Cursor fx:constant="HAND" />

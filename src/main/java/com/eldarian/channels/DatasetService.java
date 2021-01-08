@@ -61,6 +61,10 @@ public class DatasetService {
         System.out.println(line);
     }
 
+    public void handleFile(String line) { //TODO make all the file handling logic independent from socket handling
+        handlePeaks(line);
+    }
+
     public void clearChannel(int channel, boolean toFile) throws IOException {
         chartFile = File.createTempFile("scope-", ".tmp");
         if (toFile) {
@@ -87,7 +91,7 @@ public class DatasetService {
         }
     }
 
-    private void handlePeaks(String line) {
+    private void handlePeaks(String line) { //TODO добавить проверку на положительность
         String[] values = line.split(",");
         if (line.equals("0")) return;
         peaksDataset.setValue(Double.parseDouble(values[1]), "channels", values[0]);

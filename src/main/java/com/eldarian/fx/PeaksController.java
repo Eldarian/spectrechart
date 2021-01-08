@@ -1,10 +1,13 @@
 package com.eldarian.fx;
 
 import java.awt.*;
-import java.io.IOException;
+import java.io.*;
 import java.text.DecimalFormat;
+import java.util.Locale;
+import java.util.Scanner;
 
 import com.eldarian.App;
+import com.eldarian.channels.DatasetService;
 import com.eldarian.connectionHandler.SocketMode;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,8 +15,12 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.apache.commons.io.ByteOrderMark;
+import org.apache.commons.io.input.BOMInputStream;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
@@ -24,6 +31,8 @@ import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.StandardBarPainter;
+import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.xy.XYSeries;
 
 public class PeaksController {
 
@@ -125,5 +134,59 @@ public class PeaksController {
         barRenderer.setSeriesPaint(0, Color.orange);
 
         histogramChartViewer.setChart(barChart);
+    }
+
+    @FXML
+    private ChoiceBox encoding;
+
+    File fileForReading;
+
+    final FileChooser fileChooser = new FileChooser();
+
+
+    @FXML
+    private void getFromFile() throws IOException{ //TODO extract to a standalone class for multiple usage
+        fileChooser.setTitle("Open File");
+        fileForReading = fileChooser.showOpenDialog(new Stage());
+        if (fileForReading != null) {
+
+            DefaultCategoryDataset fileDataset = App.datasetService.peaksDataset; //TODO check is needed
+            App.datasetService.clearPeaks(false);
+            createXYBar();
+
+            String pattern = "\\s";
+            if (encoding.getValue().equals("UTF-8 BOM")) {
+                try (BufferedReader br = new BufferedReader(
+                        new InputStreamReader(new BOMInputStream(new FileInputStream(
+                                fileForReading), false, ByteOrderMark.UTF_8,
+                                ByteOrderMark.UTF_16BE, ByteOrderMark.UTF_16LE,
+                                ByteOrderMark.UTF_32BE, ByteOrderMark.UTF_32LE)))) {
+                    // use br here
+                    String currentLine;
+                    int x = 0;
+                    while ((currentLine = br.readLine()) != null && x < 5000) {
+                        System.out.println(currentLine);
+                        App.datasetService.handleFile(currentLine);
+                    }
+                } catch (Exception e) {
+                    App.openErrorWindow(e.getMessage() + ", " + e.toString());
+                }
+            } else {
+
+                try (Scanner scanner = new Scanner(fileForReading, (String) encoding.getValue())) {
+                    int x = 0;
+                    while (scanner.hasNext() && x < 5000) {
+                        scanner.skip(pattern);
+                        scanner.useLocale(Locale.ENGLISH);
+                        App.datasetService.handleFile(scanner.nextLine());
+                        x++;
+                    }
+                } catch (IOException e) {
+                    App.openErrorWindow(e.getMessage());
+                } catch (Exception e) {
+                    App.openErrorWindow(e.toString());
+                }
+            }
+        }
     }
 }
